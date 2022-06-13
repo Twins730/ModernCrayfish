@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=true": {
+      "model": "modern_crayfish:block/ceiling_light_pre"
+    },
+    "lit=false": {
+      "model": "modern_crayfish:block/ceiling_light_off_pre"
+    }
+  }
+}
