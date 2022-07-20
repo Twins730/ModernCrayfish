@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
@@ -33,6 +34,8 @@ public class LightBlock extends Block implements IWaterLoggable {
     public boolean canSurvive(BlockState blockState, IWorldReader worldReader, BlockPos pos) {
        return Block.canSupportCenter(worldReader, pos.relative(Direction.UP), Direction.DOWN);
     }
+
+
 
     @Override
     public VoxelShape getShape(BlockState blockState, IBlockReader blockReader, BlockPos pos, ISelectionContext context) {
@@ -73,6 +76,14 @@ public class LightBlock extends Block implements IWaterLoggable {
 
     public FluidState getFluidState(BlockState blockState) {
         return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
+    }
+
+    public BlockState updateShape(BlockState blockState, Direction direction, BlockState state, IWorld world, BlockPos pos, BlockPos pos1) {
+        if (blockState.getValue(WATERLOGGED)) {
+            world.getLiquidTicks().scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+        }
+
+        return !blockState.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(blockState, direction, state, world, pos, pos1);
     }
 
     private void updateNeighbours(World world, BlockPos pos) {

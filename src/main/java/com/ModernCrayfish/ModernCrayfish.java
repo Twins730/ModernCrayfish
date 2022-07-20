@@ -1,16 +1,19 @@
 package com.ModernCrayfish;
 
+import com.ModernCrayfish.client.renderer.tile.CeilingFanTileEntityRenderer;
 import com.ModernCrayfish.init.BlockInit;
 import com.ModernCrayfish.init.ItemInit;
 import com.ModernCrayfish.init.SoundsInit;
 import com.ModernCrayfish.init.TileInit;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -41,7 +44,9 @@ public class ModernCrayfish {
     }
     private void doClientStuff(final FMLClientSetupEvent event) {
         RenderTypeLookup.setRenderLayer(BlockInit.CEILING_LIGHT.get(), RenderType.translucent());
+        ClientRegistry.bindTileEntityRenderer(TileInit.CEILING_FAN_TILE.get(), CeilingFanTileEntityRenderer::new);
     }
+
 
     //The item grouping
     @Mod.EventBusSubscriber(modid = ModernCrayfish.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
