@@ -1,3 +1,11 @@
 {
-
+  "block.light_switch": {
+    "subtitle": "block.light_switch",
+    "sounds": [
+      {
+        "name": "modern_crayfish:block/light_switch",
+        "stream": true
+      }
+    ]
+  }
 }

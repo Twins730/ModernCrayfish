@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.util.math.vector.Vector3f;
 
 public class CeilingFanTileEntityRenderer extends TileEntityRenderer<CeilingFanTileEntity> {
@@ -27,9 +28,11 @@ public class CeilingFanTileEntityRenderer extends TileEntityRenderer<CeilingFanT
         p_225616_3_.pushPose();
         p_225616_3_.translate(0.5,0.5,0.5);
         p_225616_3_.scale(1.35f, 1.0f, 1.35f);
-        float rotation = tileEntity.prevFanRotation + (tileEntity.fanRotation - tileEntity.prevFanRotation) * Minecraft.getInstance().getDeltaFrameTime();
+        float rotation = tileEntity.prevFanRotation + (tileEntity.fanRotation - tileEntity.prevFanRotation) * Minecraft.getInstance().getFrameTime();
         p_225616_3_.mulPose(Vector3f.YP.rotationDegrees(-rotation));
         Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(ItemInit.CEILING_FAN_FAN.get()), ItemCameraTransforms.TransformType.NONE,p_225616_5_,p_225616_6_,p_225616_3_,p_225616_4_);
         p_225616_3_.popPose();
+
+
     }
 }

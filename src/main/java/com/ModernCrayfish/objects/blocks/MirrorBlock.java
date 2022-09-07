@@ -3,16 +3,15 @@ package com.ModernCrayfish.objects.blocks;
 import com.ModernCrayfish.init.SoundsInit;
 import com.ModernCrayfish.objects.tileEntity.LightSwitchTileEntity;
 import com.ModernCrayfish.objects.tileEntity.MirrorTileEntity;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.PushReaction;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
@@ -23,19 +22,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.text.*;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
-public class LightSwitchBlock extends Block implements IWaterLoggable {
-
+public class MirrorBlock extends Block implements IWaterLoggable {
     private static final VoxelShape SHAPE_S = Block.box(4, 3, 0, 12, 13, 2);
     private static final VoxelShape SHAPE_N = Block.box(4, 3, 14, 12, 13, 16);
     private static final VoxelShape SHAPE_E = Block.box(0, 3, 4, 2, 13, 12);
@@ -43,13 +37,13 @@ public class LightSwitchBlock extends Block implements IWaterLoggable {
 
     private static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    private static final BooleanProperty ON = BooleanProperty.create("on");
 
-    public LightSwitchBlock(Properties properties) {
+    public MirrorBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.defaultBlockState().setValue(ON, Boolean.FALSE).setValue(WATERLOGGED, Boolean.FALSE).setValue(FACING, Direction.NORTH));
+        this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, Boolean.FALSE).setValue(FACING,Direction.NORTH));
     }
 
+    /*
     @Override
     public boolean hasTileEntity(BlockState state) {
         return true;
@@ -58,9 +52,11 @@ public class LightSwitchBlock extends Block implements IWaterLoggable {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new LightSwitchTileEntity();
+        return new MirrorTileEntity();
     }
 
+
+     */
     @Override
     public void onPlace(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
         super.onPlace(p_220082_1_, p_220082_2_, p_220082_3_, p_220082_4_, p_220082_5_);
@@ -68,50 +64,27 @@ public class LightSwitchBlock extends Block implements IWaterLoggable {
 
 
     @Override
-    public VoxelShape getCollisionShape(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext
-            p_220071_4_) {
-        return getShape(p_220071_1_, p_220071_2_, p_220071_3_, p_220071_4_);
+    public VoxelShape getCollisionShape(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext p_220071_4_) {
+        return getShape(p_220071_1_,p_220071_2_,p_220071_3_,p_220071_4_);
     }
 
     @Override
     public VoxelShape getShape(BlockState blockState, IBlockReader reader, BlockPos pos, ISelectionContext context) {
-        switch (blockState.getValue(FACING)) {
-            case NORTH:
-                return SHAPE_N;
-            case SOUTH:
-                return SHAPE_S;
-            case WEST:
-                return SHAPE_W;
-            case EAST:
-                return SHAPE_E;
+        switch (blockState.getValue(FACING)){
+            case NORTH: return SHAPE_N;
+            case SOUTH: return SHAPE_S;
+            case WEST: return SHAPE_W;
+            case EAST: return SHAPE_E;
         }
         return SHAPE_N;
     }
 
-    public ActionResultType use(BlockState blockState, World world, BlockPos pos, PlayerEntity player, Hand
-            hand, BlockRayTraceResult traceResult) {
-        if (world.isClientSide) {
-            world.playSound(player, pos, SoundsInit.LIGHT_SWITCH.get(), SoundCategory.BLOCKS, 0.4f, 0.9f);
-            return ActionResultType.SUCCESS;
-        } else {
-            world.updateNeighborsAt(pos, this);
-            this.pull(blockState, world, pos);
-            return ActionResultType.CONSUME;
-        }
-    }
-
-    public void pull(BlockState state, World world, BlockPos pos) {
-        state = state.cycle(ON);
-        world.setBlock(pos, state, 3);
-        world.updateNeighborsAt(pos, this);
-    }
 
     public boolean canSurvive(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
         return p_196260_2_.getBlockState(p_196260_3_.relative(p_196260_1_.getValue(FACING).getOpposite())).useShapeForLightOcclusion();
     }
 
-    public BlockState updateShape(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld
-            p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
+    public BlockState updateShape(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
         return p_196271_2_.getOpposite() == p_196271_1_.getValue(FACING) && !p_196271_1_.canSurvive(p_196271_4_, p_196271_5_) ? Blocks.AIR.defaultBlockState() : super.updateShape(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
     }
 
@@ -131,10 +104,6 @@ public class LightSwitchBlock extends Block implements IWaterLoggable {
         return PushReaction.DESTROY;
     }
 
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(ON).add(WATERLOGGED).add(FACING);
-    }
-
     @Nullable
     public BlockState getStateForPlacement(BlockItemUseContext p_196258_1_) {
         BlockState blockstate = this.defaultBlockState();
@@ -143,7 +112,7 @@ public class LightSwitchBlock extends Block implements IWaterLoggable {
         BlockPos blockpos = p_196258_1_.getClickedPos();
         Direction[] adirection = p_196258_1_.getNearestLookingDirections();
 
-        for (Direction direction : adirection) {
+        for(Direction direction : adirection) {
             if (direction.getAxis().isHorizontal()) {
                 Direction direction1 = direction.getOpposite();
                 blockstate = blockstate.setValue(FACING, direction1);

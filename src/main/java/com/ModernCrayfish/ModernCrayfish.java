@@ -1,24 +1,31 @@
 package com.ModernCrayfish;
 
 import com.ModernCrayfish.client.renderer.tile.CeilingFanTileEntityRenderer;
+import com.ModernCrayfish.client.renderer.tile.MirrorTileEntityRenderer;
 import com.ModernCrayfish.init.BlockInit;
 import com.ModernCrayfish.init.ItemInit;
 import com.ModernCrayfish.init.SoundsInit;
 import com.ModernCrayfish.init.TileInit;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Objects;
 
 //The main class for the Modern Crayfish mod
 @Mod(ModernCrayfish.MOD_ID)
@@ -43,12 +50,22 @@ public class ModernCrayfish {
         LOGGER.info("ModID loading:" + MOD_ID + " complete!");
     }
     private void doClientStuff(final FMLClientSetupEvent event) {
+        // Setup block rendering
         RenderTypeLookup.setRenderLayer(BlockInit.CEILING_LIGHT.get(), RenderType.translucent());
+        // Bind Tiles to their renderers
         ClientRegistry.bindTileEntityRenderer(TileInit.CEILING_FAN_TILE.get(), CeilingFanTileEntityRenderer::new);
+       // ClientRegistry.bindTileEntityRenderer(TileInit.MIRROR_TILE.get(), MirrorTileEntityRenderer::new);
     }
 
+    public void playerTick(TickEvent.PlayerTickEvent event) {
+        if (!event.player.level.isClientSide()) {
+            ItemStack stack = event.player.getMainHandItem();
 
-    //The item grouping
+        }
+
+    }
+
+    // The item grouping
     @Mod.EventBusSubscriber(modid = ModernCrayfish.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ModernCrayfishGroup extends ItemGroup {
 
