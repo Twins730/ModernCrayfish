@@ -1,16 +1,19 @@
 package com.ModernCrayfish;
 
+import com.ModernCrayfish.client.renderer.entity.SeatEntityRenderer;
 import com.ModernCrayfish.client.renderer.tile.CeilingFanTileEntityRenderer;
 import com.ModernCrayfish.client.renderer.tile.MirrorTileEntityRenderer;
-import com.ModernCrayfish.init.BlockInit;
-import com.ModernCrayfish.init.ItemInit;
-import com.ModernCrayfish.init.SoundsInit;
-import com.ModernCrayfish.init.TileInit;
+import com.ModernCrayfish.init.*;
+import com.ModernCrayfish.objects.entity.SeatEntity;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.item.*;
+import net.minecraft.world.biome.BiomeColors;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
@@ -18,6 +21,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -25,6 +29,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.Objects;
 
 //The main class for the Modern Crayfish mod
@@ -44,8 +49,10 @@ public class ModernCrayfish {
         ItemInit.ITEMS.register(bus);
         TileInit.TILE_ENTITIES.register(bus);
         SoundsInit.SOUNDS.register(bus);
-        bus.addListener(this::doClientStuff);
+        EntityInit.ENTITIES.register(bus);
 
+        // FMLClientSetup Bus
+        bus.addListener(this::doClientStuff);
         MinecraftForge.EVENT_BUS.register(this);
         LOGGER.info("ModID loading:" + MOD_ID + " complete!");
     }
@@ -55,15 +62,18 @@ public class ModernCrayfish {
         // Bind Tiles to their renderers
         ClientRegistry.bindTileEntityRenderer(TileInit.CEILING_FAN_TILE.get(), CeilingFanTileEntityRenderer::new);
        // ClientRegistry.bindTileEntityRenderer(TileInit.MIRROR_TILE.get(), MirrorTileEntityRenderer::new);
-    }
 
-    public void playerTick(TickEvent.PlayerTickEvent event) {
-        if (!event.player.level.isClientSide()) {
-            ItemStack stack = event.player.getMainHandItem();
+        // Register Entity renderer to the entity
+        RenderingRegistry.registerEntityRenderingHandler(EntityInit.SEAT_ENTITY.get(), SeatEntityRenderer::new);
 
-        }
 
     }
+
+    @SubscribeEvent
+    public static void colorEvent(ColorHandlerEvent.Block event){
+        event.getBlockColors().register((state, blockDisplayReader, blockPos, i) -> blockDisplayReader != null && blockPos != null ? BiomeColors.getAverageWaterColor(blockDisplayReader, blockPos) : -1, BlockInit.TOILET.get());
+    }
+
 
     // The item grouping
     @Mod.EventBusSubscriber(modid = ModernCrayfish.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)

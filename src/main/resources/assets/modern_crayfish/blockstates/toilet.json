@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": {"model": "modern_crayfish:block/toilet", "y": 270},
+    "facing=south": { "model": "modern_crayfish:block/toilet", "y": 90},
+    "facing=east": { "model": "modern_crayfish:block/toilet"},
+    "facing=west": { "model": "modern_crayfish:block/toilet", "y": 180}
+  }
+}

@@ -21,7 +21,7 @@ public class BlockInit {
 
     public static final RegistryObject<Block> CEILING_LIGHT = BLOCKS.register("ceiling_light",()-> new LightBlock(AbstractBlock.Properties.of(Material.GLASS).strength(0.2f).sound(SoundType.GLASS).noOcclusion().lightLevel(litBlockEmission(15))));
     public static final RegistryObject<Block> CEILING_FAN = BLOCKS.register("ceiling_fan",()-> new CeilingFanBlock(AbstractBlock.Properties.of(Material.WOOD).strength(0.2f).sound(SoundType.WOOD).noOcclusion()));
- public static final RegistryObject<Block> LIGHT_SWITCH = BLOCKS.register("light_switch",()-> new LightSwitchBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.2f).sound(SoundType.STONE).noOcclusion()));
+    public static final RegistryObject<Block> LIGHT_SWITCH = BLOCKS.register("light_switch",()-> new LightSwitchBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.2f).sound(SoundType.STONE).noOcclusion()));
     public static final RegistryObject<Block> TOILET = BLOCKS.register("toilet",()-> new ToiletBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.2f).sound(SoundType.STONE)));
    // public static final RegistryObject<Block> MIRROR = BLOCKS.register("mirror",()-> new MirrorBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> CUP  = BLOCKS.register("cup",()-> new CupBlock(AbstractBlock.Properties.of(Material.STONE)));
@@ -40,12 +40,9 @@ public class BlockInit {
     public static final RegistryObject<Block> MODERN_TABLE = BLOCKS.register("modern_table",()-> new ModernTableBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> MODERN_LIGHT = BLOCKS.register("modern_light",()-> new ModernLightBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.2f).sound(SoundType.STONE).noOcclusion().lightLevel(litBlockEmission(15))));
 
-
     //COLORED ITEMS
     public static final RegistryObject<Block> LAMP  = BLOCKS.register("lamp",()-> new LampBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> BAR_SEAT  = BLOCKS.register("bar_seat",()-> new LampBlock(AbstractBlock.Properties.of(Material.STONE)));
-
-
 
     private static ToIntFunction<BlockState> litBlockEmission(int p_235420_0_) {
         return (p_235421_1_) -> {
