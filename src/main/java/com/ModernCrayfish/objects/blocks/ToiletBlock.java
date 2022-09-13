@@ -43,7 +43,7 @@ public class ToiletBlock extends Block implements IWaterLoggable {
     @Override
     public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTrace) {
         if(!world.isClientSide()) {
-            return SeatEntity.create(world, pos, 0.3, player, state.getValue(FACING), true);
+            return SeatEntity.create(world, pos, 0.3,0.1, player, state.getValue(FACING), true);
         }
         return ActionResultType.SUCCESS;
     }

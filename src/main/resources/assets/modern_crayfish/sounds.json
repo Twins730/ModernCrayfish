@@ -7,5 +7,22 @@
         "stream": true
       }
     ]
+  },
+  "entity.fart": {
+    "subtitle": "entity.fart",
+    "sounds": [
+      {
+        "name": "modern_crayfish:entity/fart_1",
+        "stream": true
+      },
+      {
+        "name": "modern_crayfish:entity/fart_2",
+        "stream": true
+      },
+      {
+        "name": "modern_crayfish:entity/fart_3",
+        "stream": true
+      }
+    ]
   }
 }

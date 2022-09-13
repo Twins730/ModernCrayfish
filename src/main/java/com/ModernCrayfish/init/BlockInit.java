@@ -23,7 +23,9 @@ public class BlockInit {
     public static final RegistryObject<Block> CEILING_FAN = BLOCKS.register("ceiling_fan",()-> new CeilingFanBlock(AbstractBlock.Properties.of(Material.WOOD).strength(0.2f).sound(SoundType.WOOD).noOcclusion()));
     public static final RegistryObject<Block> LIGHT_SWITCH = BLOCKS.register("light_switch",()-> new LightSwitchBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.2f).sound(SoundType.STONE).noOcclusion()));
     public static final RegistryObject<Block> TOILET = BLOCKS.register("toilet",()-> new ToiletBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.2f).sound(SoundType.STONE)));
-   // public static final RegistryObject<Block> MIRROR = BLOCKS.register("mirror",()-> new MirrorBlock(AbstractBlock.Properties.of(Material.STONE)));
+    public static final RegistryObject<Block> GOLDEN_TOILET = BLOCKS.register("golden_toilet",()-> new ToiletBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.2f).sound(SoundType.STONE)));
+
+    // public static final RegistryObject<Block> MIRROR = BLOCKS.register("mirror",()-> new MirrorBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> CUP  = BLOCKS.register("cup",()-> new CupBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> CUTTING_BOARD  = BLOCKS.register("cutting_board",()-> new CuttingBoardBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> TOASTER  = BLOCKS.register("toaster",()-> new ToasterBlock(AbstractBlock.Properties.of(Material.STONE)));

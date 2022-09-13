@@ -14,5 +14,6 @@ public class SoundsInit {
 
     public static final RegistryObject<SoundEvent> LIGHT_SWITCH = SOUNDS.register("light_switch", ()-> new SoundEvent(new ResourceLocation(ModernCrayfish.MOD_ID,"block.light_switch")));
 
+    public static final RegistryObject<SoundEvent> FART = SOUNDS.register("fart", ()-> new SoundEvent(new ResourceLocation(ModernCrayfish.MOD_ID,"entity.fart")));
 
 }
