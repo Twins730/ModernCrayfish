@@ -26,14 +26,15 @@ public class BlockInit {
     public static final RegistryObject<Block> GOLDEN_TOILET = BLOCKS.register("golden_toilet",()-> new ToiletBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.2f).sound(SoundType.STONE)));
 
     // public static final RegistryObject<Block> MIRROR = BLOCKS.register("mirror",()-> new MirrorBlock(AbstractBlock.Properties.of(Material.STONE)));
-    public static final RegistryObject<Block> CUP  = BLOCKS.register("cup",()-> new CupBlock(AbstractBlock.Properties.of(Material.STONE)));
+    public static final RegistryObject<Block> CUP  = BLOCKS.register("cup",()-> new CupBlock(AbstractBlock.Properties.of(Material.GLASS)));
     public static final RegistryObject<Block> CUTTING_BOARD  = BLOCKS.register("cutting_board",()-> new CuttingBoardBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> TOASTER  = BLOCKS.register("toaster",()-> new ToasterBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> BLENDER  = BLOCKS.register("blender",()-> new BlenderBlock(AbstractBlock.Properties.of(Material.STONE)));
-    public static final RegistryObject<Block> COOKIE_JAR  = BLOCKS.register("cookie_jar",()-> new CookieJarBlock(AbstractBlock.Properties.of(Material.STONE)));
+    public static final RegistryObject<Block> COOKIE_JAR  = BLOCKS.register("cookie_jar",()-> new CookieJarBlock(AbstractBlock.Properties.of(Material.GLASS)));
     public static final RegistryObject<Block> MEDICINE_CABINET  = BLOCKS.register("medicine_cabinet",()-> new MedicineCabinetBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> STOVE  = BLOCKS.register("stove",()-> new StoveBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> MICROWAVE  = BLOCKS.register("microwave",()-> new MicrowaveBlock(AbstractBlock.Properties.of(Material.STONE)));
+    public static final RegistryObject<Block> PLATE  = BLOCKS.register("plate",()-> new PlateBlock(AbstractBlock.Properties.of(Material.STONE)));
 
     //MODERN BLOCKS
     public static final RegistryObject<Block> MODERN_WINDOW = BLOCKS.register("modern_window",()-> new ModernWindowBlock(AbstractBlock.Properties.of(Material.STONE)));

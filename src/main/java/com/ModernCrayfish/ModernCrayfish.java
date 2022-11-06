@@ -3,8 +3,10 @@ package com.ModernCrayfish;
 import com.ModernCrayfish.client.renderer.entity.SeatEntityRenderer;
 import com.ModernCrayfish.client.renderer.tile.CeilingFanTileEntityRenderer;
 import com.ModernCrayfish.client.renderer.tile.MirrorTileEntityRenderer;
+import com.ModernCrayfish.client.renderer.tile.PlateTileEntityRenderer;
 import com.ModernCrayfish.init.*;
 import com.ModernCrayfish.objects.entity.SeatEntity;
+import com.ModernCrayfish.objects.tileEntity.PlateTileEntity;
 import com.ModernCrayfish.util.Constants;
 import com.ModernCrayfish.util.CustomBlockColor;
 import com.ModernCrayfish.util.CustomItemColor;
@@ -71,16 +73,17 @@ public class ModernCrayfish {
     private void doClientStuff(final FMLClientSetupEvent event) {
         // Setup block rendering
         RenderTypeLookup.setRenderLayer(BlockInit.CEILING_LIGHT.get(), RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(BlockInit.COOKIE_JAR.get(), RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(BlockInit.CUP.get(), RenderType.translucent());
 
         // Bind Tiles to their renderers
         ClientRegistry.bindTileEntityRenderer(TileInit.CEILING_FAN_TILE.get(), CeilingFanTileEntityRenderer::new);
-
+        ClientRegistry.bindTileEntityRenderer(TileInit.PLATE_TILE.get(), PlateTileEntityRenderer::new);
         // Register Entity renderer to the entity
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.SEAT_ENTITY.get(), SeatEntityRenderer::new);
 
         // Register Keybindings
         ClientRegistry.registerKeyBinding(KeyBindingInit.KEY_FART);
-
     }
 
     @SubscribeEvent
@@ -103,7 +106,7 @@ public class ModernCrayfish {
 
     public void registerItemColors(ColorHandlerEvent.Item event){
         // Register the items to the water color modifier
-        event.getItemColors().register(new CustomItemColor(0x3D8EFF), ItemInit.TOILET.get(),BlockInit.GOLDEN_TOILET.get());
+        event.getItemColors().register(new CustomItemColor(0x3D8EFF), ItemInit.TOILET.get(), ItemInit.GOLDEN_TOILET.get());
     }
 
 

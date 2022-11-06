@@ -47,14 +47,11 @@ public class CeilingFanTileEntity extends TileEntity implements ITickableTileEnt
         return INFINITE_EXTENT_AABB;
     }
 
-    public boolean isOn(){
-        return this.powered;
-    }
-
     @Override
     public void load(BlockState p_230337_1_, CompoundNBT nbt) {
         fanRotation = nbt.getFloat("fan_rot");
         currentSpeed = nbt.getFloat("speed");
+        powered = nbt.getBoolean("powered");
         super.load(p_230337_1_, nbt);
     }
 
@@ -62,6 +59,7 @@ public class CeilingFanTileEntity extends TileEntity implements ITickableTileEnt
     public CompoundNBT save(CompoundNBT nbt) {
         nbt.putFloat("fan_rot",fanRotation);
         nbt.putFloat("speed",currentSpeed);
+        nbt.putBoolean("powered",powered);
         return super.save(nbt);
     }
 }

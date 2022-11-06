@@ -61,17 +61,6 @@ public class LightSwitchBlock extends Block implements IWaterLoggable {
         return new LightSwitchTileEntity();
     }
 
-    @Override
-    public void onPlace(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
-        super.onPlace(p_220082_1_, p_220082_2_, p_220082_3_, p_220082_4_, p_220082_5_);
-    }
-
-
-    @Override
-    public VoxelShape getCollisionShape(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext
-            p_220071_4_) {
-        return getShape(p_220071_1_, p_220071_2_, p_220071_3_, p_220071_4_);
-    }
 
     @Override
     public VoxelShape getShape(BlockState blockState, IBlockReader reader, BlockPos pos, ISelectionContext context) {
@@ -88,8 +77,7 @@ public class LightSwitchBlock extends Block implements IWaterLoggable {
         return SHAPE_N;
     }
 
-    public ActionResultType use(BlockState blockState, World world, BlockPos pos, PlayerEntity player, Hand
-            hand, BlockRayTraceResult traceResult) {
+    public ActionResultType use(BlockState blockState, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult traceResult) {
         if (world.isClientSide) {
             world.playSound(player, pos, SoundsInit.LIGHT_SWITCH.get(), SoundCategory.BLOCKS, 0.4f, 0.9f);
             return ActionResultType.SUCCESS;
@@ -107,7 +95,7 @@ public class LightSwitchBlock extends Block implements IWaterLoggable {
     }
 
     public boolean canSurvive(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-        return p_196260_2_.getBlockState(p_196260_3_.relative(p_196260_1_.getValue(FACING).getOpposite())).useShapeForLightOcclusion();
+        return p_196260_2_.getBlockState(p_196260_3_.relative(p_196260_1_.getValue(FACING))).useShapeForLightOcclusion();
     }
 
     public BlockState updateShape(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld
