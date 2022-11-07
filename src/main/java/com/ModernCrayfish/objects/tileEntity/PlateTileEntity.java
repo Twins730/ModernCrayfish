@@ -4,6 +4,7 @@ import com.ModernCrayfish.init.TileInit;
 import net.minecraft.block.BarrelBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.entity.ItemFrameRenderer;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
@@ -24,6 +25,14 @@ public class PlateTileEntity extends TileEntity {
 
     public PlateTileEntity() {
         super(TileInit.PLATE_TILE.get());
+    }
+
+    public void remove(World world){
+        if(!world.isClientSide){
+            items.forEach((item)->{
+                world.addFreshEntity(new ItemEntity(world,worldPosition.getX(),worldPosition.getY(),worldPosition.getZ(),item));
+            });
+        }
     }
 
     public void use(World world, PlayerEntity player) {

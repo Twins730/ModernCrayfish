@@ -1,5 +1,6 @@
 package com.ModernCrayfish.objects.blocks;
 
+import com.ModernCrayfish.objects.tileEntity.CookieJarTileEntity;
 import com.ModernCrayfish.objects.tileEntity.PlateTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -49,5 +50,14 @@ public class PlateBlock extends Block {
             }
             return ActionResultType.CONSUME;
         }
+    }
+
+    @Override
+    public void onRemove(BlockState state, World world, BlockPos pos, BlockState p_196243_4_, boolean p_196243_5_) {
+        TileEntity tileentity = world.getBlockEntity(pos);
+        if(tileentity instanceof PlateTileEntity){
+            ((PlateTileEntity) tileentity).remove(world);
+        }
+        super.onRemove(state, world, pos, p_196243_4_, p_196243_5_);
     }
 }
