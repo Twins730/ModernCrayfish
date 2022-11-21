@@ -1,10 +1,7 @@
 package com.ModernCrayfish;
 
 import com.ModernCrayfish.client.renderer.entity.SeatEntityRenderer;
-import com.ModernCrayfish.client.renderer.tile.CeilingFanTileEntityRenderer;
-import com.ModernCrayfish.client.renderer.tile.CookieJarTileEntityRenderer;
-import com.ModernCrayfish.client.renderer.tile.MirrorTileEntityRenderer;
-import com.ModernCrayfish.client.renderer.tile.PlateTileEntityRenderer;
+import com.ModernCrayfish.client.renderer.tile.*;
 import com.ModernCrayfish.init.*;
 import com.ModernCrayfish.objects.entity.SeatEntity;
 import com.ModernCrayfish.objects.tileEntity.CookieJarTileEntity;
@@ -82,6 +79,8 @@ public class ModernCrayfish {
         ClientRegistry.bindTileEntityRenderer(TileInit.CEILING_FAN_TILE.get(), CeilingFanTileEntityRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileInit.PLATE_TILE.get(), PlateTileEntityRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileInit.COOKIE_JAR_TILE.get(), CookieJarTileEntityRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(TileInit.CUTTING_BOARD.get(), CuttingBoardTileEntityRenderer::new);
+
         // Register Entity renderer to the entity
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.SEAT_ENTITY.get(), SeatEntityRenderer::new);
 

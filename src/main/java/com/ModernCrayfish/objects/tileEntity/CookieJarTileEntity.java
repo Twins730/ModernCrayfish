@@ -6,13 +6,13 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -46,9 +46,6 @@ public class CookieJarTileEntity extends TileEntity {
             });
             int itemCount = count - 1;
 
-            if (itemCount == 0) {
-                itemCount = 0;
-            }
             if (count < 6 && player.getMainHandItem().isEdible()) {
                 this.items.set(count, new ItemStack(player.getMainHandItem().getItem(), 1));
                 player.getMainHandItem().shrink(1);
@@ -57,6 +54,10 @@ public class CookieJarTileEntity extends TileEntity {
                 this.items.set(itemCount, ItemStack.EMPTY);
             }
             world.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
+        } else {
+            if(count > 0){
+                player.playSound(SoundEvents.ITEM_PICKUP,1,1);
+            }
         }
     }
 

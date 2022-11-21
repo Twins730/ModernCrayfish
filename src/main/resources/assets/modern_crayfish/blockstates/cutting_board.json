@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": {"model": "modern_crayfish:block/cutting_board", "y": 270},
+    "facing=south": { "model": "modern_crayfish:block/cutting_board", "y": 90},
+    "facing=east": { "model": "modern_crayfish:block/cutting_board"},
+    "facing=west": { "model": "modern_crayfish:block/cutting_board", "y": 180}
+  }
+}
