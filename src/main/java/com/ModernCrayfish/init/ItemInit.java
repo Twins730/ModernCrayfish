@@ -27,6 +27,7 @@ public class ItemInit {
     public static final RegistryObject<Item> COOKIE_JAR = ITEMS.register("cookie_jar",()-> new BlockItem(BlockInit.COOKIE_JAR.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
     public static final RegistryObject<Item> STOVE = ITEMS.register("stove",()-> new BlockItem(BlockInit.STOVE.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
     public static final RegistryObject<Item> MEDICINE_CABINET = ITEMS.register("medicine_cabinet",()-> new BlockItem(BlockInit.MEDICINE_CABINET.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
+    public static final RegistryObject<Item> TOASTER = ITEMS.register("toaster",()-> new BlockItem(BlockInit.TOASTER.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
     public static final RegistryObject<Item> MICROWAVE = ITEMS.register("microwave",()-> new BlockItem(BlockInit.MICROWAVE.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
     public static final RegistryObject<Item> PLATE = ITEMS.register("plate",()-> new BlockItem(BlockInit.PLATE.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
 

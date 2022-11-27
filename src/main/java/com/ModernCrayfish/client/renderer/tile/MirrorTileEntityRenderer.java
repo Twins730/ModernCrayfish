@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.util.math.BlockPos;
 
+//TODO FIX this mess
 public class MirrorTileEntityRenderer  //extends TileEntityRenderer<MirrorTileEntity> {
 {
     private static MirrorRenderer reflection = new MirrorRenderer(Minecraft.getInstance(),Minecraft.getInstance().renderBuffers());
@@ -35,6 +36,5 @@ public class MirrorTileEntityRenderer  //extends TileEntityRenderer<MirrorTileEn
 
 
         p_225616_3_.popPose();
-
     }
 }
