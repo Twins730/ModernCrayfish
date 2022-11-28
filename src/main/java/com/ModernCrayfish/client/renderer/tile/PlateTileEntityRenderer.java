@@ -21,15 +21,15 @@ public class PlateTileEntityRenderer extends TileEntityRenderer<PlateTileEntity>
     }
 
     @Override
-    public void render(PlateTileEntity plateTileEntity, float p_225616_2_, MatrixStack p_225616_3_, IRenderTypeBuffer p_225616_4_, int p_225616_5_, int p_225616_6_) {
-        p_225616_3_.pushPose();
-        p_225616_3_.translate(0.5,0.12,0.5);
-        p_225616_3_.scale(0.5f,0.5f,0.5f);
-        p_225616_3_.mulPose(Vector3f.XP.rotationDegrees(90));
-        p_225616_3_.mulPose(Vector3f.ZP.rotationDegrees(plateTileEntity.itemDirection.toYRot()));
+    public void render(PlateTileEntity plateTileEntity, float p_225616_2_, MatrixStack stack, IRenderTypeBuffer buffer, int p_225616_5_, int p_225616_6_) {
         if(!plateTileEntity.items.get(0).isEmpty()) {
-            Minecraft.getInstance().getItemRenderer().renderStatic(plateTileEntity.items.get(0), ItemCameraTransforms.TransformType.NONE, p_225616_5_, p_225616_6_, p_225616_3_, p_225616_4_);
+            stack.pushPose();
+            stack.translate(0.5, 0.12, 0.5);
+            stack.scale(0.5f, 0.5f, 0.5f);
+            stack.mulPose(Vector3f.XP.rotationDegrees(90));
+            stack.mulPose(Vector3f.ZP.rotationDegrees(plateTileEntity.itemDirection.toYRot()));
+            Minecraft.getInstance().getItemRenderer().renderStatic(plateTileEntity.items.get(0), ItemCameraTransforms.TransformType.NONE, p_225616_5_, p_225616_6_, stack, buffer);
+            stack.popPose();
         }
-        p_225616_3_.popPose();
     }
 }

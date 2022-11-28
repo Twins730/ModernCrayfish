@@ -80,6 +80,7 @@ public class ModernCrayfish {
         ClientRegistry.bindTileEntityRenderer(TileInit.PLATE_TILE.get(), PlateTileEntityRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileInit.COOKIE_JAR_TILE.get(), CookieJarTileEntityRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileInit.CUTTING_BOARD.get(), CuttingBoardTileEntityRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(TileInit.TOASTER.get(), ToasterTileEntityRenderer::new);
 
         // Register Entity renderer to the entity
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.SEAT_ENTITY.get(), SeatEntityRenderer::new);
@@ -110,8 +111,6 @@ public class ModernCrayfish {
         // Register the items to the water color modifier
         event.getItemColors().register(new CustomItemColor(0x3D8EFF), ItemInit.TOILET.get(), ItemInit.GOLDEN_TOILET.get());
     }
-
-
 
     // The item grouping
     @Mod.EventBusSubscriber(modid = ModernCrayfish.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
