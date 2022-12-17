@@ -21,7 +21,6 @@ public class ToasterTileEntity extends TileEntity implements ITickableTileEntity
 
     public Direction itemDirection = Direction.NORTH;
     public NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
-    public int count = 0;
     public boolean toasting = false;
     public double toastTime = 0;
 
@@ -61,9 +60,7 @@ public class ToasterTileEntity extends TileEntity implements ITickableTileEntity
 
     public void remove(World world) {
         if (!world.isClientSide) {
-            items.forEach((item) -> {
-                world.addFreshEntity(new ItemEntity(world, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), item));
-            });
+            items.forEach((item) -> world.addFreshEntity(new ItemEntity(world, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), item)));
         }
     }
 

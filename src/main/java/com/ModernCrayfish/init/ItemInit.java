@@ -20,6 +20,7 @@ public class ItemInit {
     public static final RegistryObject<Item> LIGHT_SWITCH = ITEMS.register("light_switch",()-> new BlockItem(BlockInit.LIGHT_SWITCH.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
     public static final RegistryObject<Item> TOILET = ITEMS.register("toilet",()-> new BlockItem(BlockInit.TOILET.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
     public static final RegistryObject<Item> GOLDEN_TOILET = ITEMS.register("golden_toilet",()-> new BlockItem(BlockInit.GOLDEN_TOILET.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
+    public static final RegistryObject<Item> MIRROR = ITEMS.register("mirror",()-> new BlockItem(BlockInit.MIRROR.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
 
     public static final RegistryObject<Item> CUP = ITEMS.register("cup",()-> new BlockItem(BlockInit.CUP.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
     public static final RegistryObject<Item> CUTTING_BOARD = ITEMS.register("cutting_board",()-> new BlockItem(BlockInit.CUTTING_BOARD.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
@@ -32,9 +33,9 @@ public class ItemInit {
     public static final RegistryObject<Item> PLATE = ITEMS.register("plate",()-> new BlockItem(BlockInit.PLATE.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
 
     //MODERN BLOCKS
-    public static final RegistryObject<Item> MODERN_DOOR = ITEMS.register("modern_door",()-> new BlockItem(BlockInit.MODERN_DOOR.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
+    //public static final RegistryObject<Item> MODERN_DOOR = ITEMS.register("modern_door",()-> new BlockItem(BlockInit.MODERN_DOOR.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
     public static final RegistryObject<Item> MODERN_WINDOW = ITEMS.register("modern_window",()-> new BlockItem(BlockInit.MODERN_WINDOW.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
-    public static final RegistryObject<Item> MODERN_BED = ITEMS.register("modern_bed",()-> new BlockItem(BlockInit.MODERN_BED.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
+   // public static final RegistryObject<Item> MODERN_BED = ITEMS.register("modern_bed",()-> new BlockItem(BlockInit.MODERN_BED.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
     public static final RegistryObject<Item> MODERN_TABLE = ITEMS.register("modern_table",()-> new BlockItem(BlockInit.MODERN_TABLE.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
     public static final RegistryObject<Item> MODERN_LIGHT = ITEMS.register("modern_light",()-> new BlockItem(BlockInit.MODERN_LIGHT.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
 

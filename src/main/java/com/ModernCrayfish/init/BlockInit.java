@@ -25,7 +25,7 @@ public class BlockInit {
     public static final RegistryObject<Block> TOILET = BLOCKS.register("toilet",()-> new ToiletBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.2f).sound(SoundType.STONE)));
     public static final RegistryObject<Block> GOLDEN_TOILET = BLOCKS.register("golden_toilet",()-> new ToiletBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.2f).sound(SoundType.STONE)));
 
-    // public static final RegistryObject<Block> MIRROR = BLOCKS.register("mirror",()-> new MirrorBlock(AbstractBlock.Properties.of(Material.STONE)));
+    public static final RegistryObject<Block> MIRROR = BLOCKS.register("mirror",()-> new MirrorBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> CUP  = BLOCKS.register("cup",()-> new CupBlock(AbstractBlock.Properties.of(Material.GLASS)));
     public static final RegistryObject<Block> CUTTING_BOARD  = BLOCKS.register("cutting_board",()-> new CuttingBoardBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> TOASTER  = BLOCKS.register("toaster",()-> new ToasterBlock(AbstractBlock.Properties.of(Material.STONE)));
@@ -38,7 +38,7 @@ public class BlockInit {
 
     //MODERN BLOCKS
     public static final RegistryObject<Block> MODERN_WINDOW = BLOCKS.register("modern_window",()-> new ModernWindowBlock(AbstractBlock.Properties.of(Material.STONE)));
-    public static final RegistryObject<Block> MODERN_BED = BLOCKS.register("modern_bed",()-> new ModernBedBlock(AbstractBlock.Properties.of(Material.STONE)));
+   // public static final RegistryObject<Block> MODERN_BED = BLOCKS.register("modern_bed",()-> new ModernBedBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> MODERN_DOOR  = BLOCKS.register("modern_door",()-> new ModernDoorBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> MODERN_TABLE = BLOCKS.register("modern_table",()-> new ModernTableBlock(AbstractBlock.Properties.of(Material.STONE)));
     public static final RegistryObject<Block> MODERN_LIGHT = BLOCKS.register("modern_light",()-> new ModernLightBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.2f).sound(SoundType.STONE).noOcclusion().lightLevel(litBlockEmission(15))));

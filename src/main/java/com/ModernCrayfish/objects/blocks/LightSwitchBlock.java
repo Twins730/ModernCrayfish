@@ -135,13 +135,13 @@ public class LightSwitchBlock extends Block implements IWaterLoggable {
             if (direction.getAxis().isHorizontal()) {
                 Direction direction1 = direction.getOpposite();
                 blockstate = blockstate.setValue(FACING, direction1);
-                if (blockstate.canSurvive(iworldreader, blockpos)) {
+              //  if (blockstate.canSurvive(iworldreader, blockpos)) {
                     return blockstate.setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
-                }
+               // }
             }
         }
 
-        return null;
+        return blockstate.setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
     }
 
 

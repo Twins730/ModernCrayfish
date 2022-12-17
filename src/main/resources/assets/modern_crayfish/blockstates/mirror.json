@@ -1,17 +1,17 @@
 {
   "variants": {
-    "facing=north,on=true": {
+    "facing=north": {
       "model": "modern_crayfish:block/mirror",
       "y": 180
     },
-    "facing=south,on=true": {
+    "facing=south": {
       "model": "modern_crayfish:block/mirror"
     },
-    "facing=east,on=true": {
+    "facing=east": {
       "model": "modern_crayfish:block/mirror",
       "y": -90
     },
-    "facing=west,on=true": {
+    "facing=west": {
       "model": "modern_crayfish:block/mirror",
       "y": 90
     }

@@ -1,5 +1,6 @@
 package com.ModernCrayfish;
 
+import com.ModernCrayfish.client.renderer.entity.MirrorEntityRenderer;
 import com.ModernCrayfish.client.renderer.entity.SeatEntityRenderer;
 import com.ModernCrayfish.client.renderer.tile.*;
 import com.ModernCrayfish.init.*;
@@ -9,22 +10,28 @@ import com.ModernCrayfish.objects.tileEntity.PlateTileEntity;
 import com.ModernCrayfish.util.Constants;
 import com.ModernCrayfish.util.CustomBlockColor;
 import com.ModernCrayfish.util.CustomItemColor;
+import com.ModernCrayfish.util.MirrorRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.client.GameSettings;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.*;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.biome.BiomeColors;
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
@@ -38,8 +45,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.utils.Log;
 
-import javax.swing.text.html.parser.Entity;
-import java.util.Objects;
+
 
 //The main class for the Modern Crayfish mod
 @Mod(ModernCrayfish.MOD_ID)
@@ -48,6 +54,9 @@ public class ModernCrayfish {
 
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "modern_crayfish";
+    public static boolean rendering = false;
+    public static Entity renderEntity = null;
+    public static Entity backupEntity = null;
 
     //Initialize the mod
     public ModernCrayfish() {
@@ -81,10 +90,11 @@ public class ModernCrayfish {
         ClientRegistry.bindTileEntityRenderer(TileInit.COOKIE_JAR_TILE.get(), CookieJarTileEntityRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileInit.CUTTING_BOARD.get(), CuttingBoardTileEntityRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileInit.TOASTER.get(), ToasterTileEntityRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(TileInit.MIRROR_TILE.get(), MirrorTileEntityRenderer::new);
 
         // Register Entity renderer to the entity
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.SEAT_ENTITY.get(), SeatEntityRenderer::new);
-
+        RenderingRegistry.registerEntityRenderingHandler(EntityInit.MIRROR_ENTITY.get(), MirrorEntityRenderer::new);
         // Register Keybindings
         ClientRegistry.registerKeyBinding(KeyBindingInit.KEY_FART);
     }
@@ -100,6 +110,40 @@ public class ModernCrayfish {
         }
     }
 
+    @SubscribeEvent
+    public void onClientWorldLoad(WorldEvent.Load event) {
+        if(event.getWorld() instanceof ClientWorld) {
+            MirrorTileEntityRenderer.reflection.setLevel((ClientWorld) event.getWorld());
+        }
+    }
+
+    @SubscribeEvent
+    public void onClientWorldUnload(WorldEvent.Unload event) {
+        if(event.getWorld() instanceof ClientWorld) {
+            MirrorTileEntityRenderer.clearRegisteredMirrors();
+        }
+    }
+
+    @SubscribeEvent
+    public void onPrePlayerRender(RenderPlayerEvent.Pre event) {
+        if(!rendering) return;
+
+        if(event.getPlayer() == renderEntity) {
+            backupEntity = Minecraft.getInstance().cameraEntity;
+            Minecraft.getInstance().setCameraEntity(renderEntity);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPostPlayerRender(RenderPlayerEvent.Post event)
+    {
+        if(!rendering) return;
+
+        if(event.getPlayer() == renderEntity) {
+            Minecraft.getInstance().setCameraEntity(backupEntity);
+            renderEntity = null;
+        }
+    }
 
     public void registerBlockColors(ColorHandlerEvent.Block event){
         // Register the blocks to the water color modifier
