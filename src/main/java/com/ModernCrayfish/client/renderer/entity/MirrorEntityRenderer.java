@@ -12,7 +12,8 @@ public class MirrorEntityRenderer extends EntityRenderer<MirrorEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MirrorEntity entity) {
+    public ResourceLocation getEntityTexture(MirrorEntity entity) {
         return null;
     }
+
 }

@@ -20,12 +20,12 @@ public class CookieJarTileEntityRenderer extends TileEntityRenderer<CookieJarTil
     public void render(CookieJarTileEntity tileEntity, float p_225616_2_, MatrixStack stack, IRenderTypeBuffer buffer, int p_225616_5_, int p_225616_6_) {
         AtomicDouble offset = new AtomicDouble(0.06);
         tileEntity.items.forEach((item)-> {
-            stack.pushPose();
+            stack.push();
             stack.translate(0.5, offset.get(), 0.5);
             stack.scale(0.45f, 0.5f, 0.45f);
-            stack.mulPose(Vector3f.XP.rotationDegrees(90));
-            Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemCameraTransforms.TransformType.NONE, p_225616_5_, p_225616_6_, stack, buffer);
-            stack.popPose();
+            stack.rotate(Vector3f.XP.rotationDegrees(90));
+            Minecraft.getInstance().getItemRenderer().renderItem(item, ItemCameraTransforms.TransformType.NONE, p_225616_5_, p_225616_6_, stack, buffer);
+            stack.pop();
             offset.set(offset.get() + 0.09);
         });
     }

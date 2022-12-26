@@ -29,15 +29,15 @@ public class CookieJarTileEntity extends TileEntity {
 
 
     public void remove(World world){
-        if(!world.isClientSide){
+        if(!world.isRemote){
             items.forEach((item)->{
-                world.addFreshEntity(new ItemEntity(world,worldPosition.getX(),worldPosition.getY(),worldPosition.getZ(),item));
+                world.addEntity(new ItemEntity(world,pos.getX(),pos.getY(),pos.getZ(),item));
             });
         }
     }
 
     public void use(World world, PlayerEntity player){
-        if(!world.isClientSide) {
+        if(!world.isRemote) {
             this.count = 0;
             items.forEach((item) -> {
                 if (!item.isEmpty()) {
@@ -46,31 +46,31 @@ public class CookieJarTileEntity extends TileEntity {
             });
             int itemCount = count - 1;
 
-            if (count < 6 && player.getMainHandItem().isEdible()) {
-                this.items.set(count, new ItemStack(player.getMainHandItem().getItem(), 1));
-                player.getMainHandItem().shrink(1);
+            if (count < 6 && player.getHeldItemMainhand().isFood()) {
+                this.items.set(count, new ItemStack(player.getHeldItemMainhand().getItem(), 1));
+                player.getHeldItemMainhand().shrink(1);
             } else if (count > 0) {
-                player.addItem(items.get(itemCount));
+                player.addItemStackToInventory(items.get(itemCount));
                 this.items.set(itemCount, ItemStack.EMPTY);
             }
-            world.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
+            world.notifyBlockUpdate(this.pos, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
         } else {
             if(count > 0){
-                player.playSound(SoundEvents.ITEM_PICKUP,1,1);
+                player.playSound(SoundEvents.ENTITY_ITEM_PICKUP,1,1);
             }
         }
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT nbt) {
-        super.save(nbt);
+    public CompoundNBT write(CompoundNBT nbt) {
+        super.write(nbt);
         ItemStackHelper.saveAllItems(nbt, items);
         return nbt;
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT nbt) {
-        super.load(state, nbt);
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
         this.items = NonNullList.withSize(6, ItemStack.EMPTY);
         ItemStackHelper.loadAllItems(nbt, items);
     }
@@ -80,25 +80,24 @@ public class CookieJarTileEntity extends TileEntity {
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         CompoundNBT nbt = new CompoundNBT();
-        this.save(nbt);
-
-        return new SUpdateTileEntityPacket(worldPosition, 1, nbt);
+        this.write(nbt);
+        return new SUpdateTileEntityPacket(pos, 1, nbt);
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
-        return this.save(new CompoundNBT());
+        return this.write(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        assert level != null;
-        this.load(level.getBlockState(worldPosition),pkt.getTag());
+        assert world != null;
+        this.read(world.getBlockState(pos),pkt.getNbtCompound());
     }
 
     @Override
     public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        this.load(state,tag);
+        this.read(state,tag);
         super.handleUpdateTag(state, tag);
     }
 

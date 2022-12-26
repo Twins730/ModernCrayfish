@@ -24,7 +24,7 @@ public class CeilingFanTileEntity extends TileEntity implements ITickableTileEnt
     @Override
     public void tick() {
         BlockState state = this.getBlockState();
-        this.powered = state.getValue(CeilingFanBlock.POWERED);
+        this.powered = state.get(CeilingFanBlock.POWERED);
         this.prevFanRotation = this.fanRotation;
         if(powered) {
             currentSpeed += acceleration;
@@ -38,7 +38,7 @@ public class CeilingFanTileEntity extends TileEntity implements ITickableTileEnt
     }
 
     @Override
-    public double getViewDistance() {
+    public double getMaxRenderDistanceSquared() {
         return 16384;
     }
 
@@ -48,18 +48,20 @@ public class CeilingFanTileEntity extends TileEntity implements ITickableTileEnt
     }
 
     @Override
-    public void load(BlockState p_230337_1_, CompoundNBT nbt) {
+    public void read(BlockState p_230337_1_, CompoundNBT nbt) {
         fanRotation = nbt.getFloat("fan_rot");
         currentSpeed = nbt.getFloat("speed");
         powered = nbt.getBoolean("powered");
-        super.load(p_230337_1_, nbt);
+        super.read(p_230337_1_, nbt);
     }
 
+
+
     @Override
-    public CompoundNBT save(CompoundNBT nbt) {
+    public CompoundNBT write(CompoundNBT nbt) {
         nbt.putFloat("fan_rot",fanRotation);
         nbt.putFloat("speed",currentSpeed);
         nbt.putBoolean("powered",powered);
-        return super.save(nbt);
+        return super.write(nbt);
     }
 }

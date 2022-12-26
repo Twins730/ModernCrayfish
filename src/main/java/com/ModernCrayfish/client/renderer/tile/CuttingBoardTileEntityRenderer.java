@@ -16,20 +16,20 @@ public class CuttingBoardTileEntityRenderer extends TileEntityRenderer<CuttingBo
     }
 
     @Override
-    public boolean shouldRenderOffScreen(CuttingBoardTileEntity tileEntity) {
+    public boolean isGlobalRenderer(CuttingBoardTileEntity tileEntity) {
         return true;
     }
 
     @Override
     public void render(CuttingBoardTileEntity tileEntity, float p_225616_2_, MatrixStack p_225616_3_, IRenderTypeBuffer p_225616_4_, int p_225616_5_, int p_225616_6_) {
         if(!tileEntity.items.get(0).isEmpty()) {
-            p_225616_3_.pushPose();
+            p_225616_3_.push();
             p_225616_3_.translate(0.5, 0.12, 0.5);
             p_225616_3_.scale(0.5f, 0.5f, 0.5f);
-            p_225616_3_.mulPose(Vector3f.XP.rotationDegrees(90));
-            p_225616_3_.mulPose(Vector3f.ZP.rotationDegrees(tileEntity.itemDirection.toYRot()));
-            Minecraft.getInstance().getItemRenderer().renderStatic(tileEntity.items.get(0), ItemCameraTransforms.TransformType.NONE, p_225616_5_, p_225616_6_, p_225616_3_, p_225616_4_);
-            p_225616_3_.popPose();
+            p_225616_3_.rotate(Vector3f.XP.rotationDegrees(90));
+            p_225616_3_.rotate(Vector3f.ZP.rotationDegrees(tileEntity.itemDirection.getHorizontalAngle()));
+            Minecraft.getInstance().getItemRenderer().renderItem(tileEntity.items.get(0), ItemCameraTransforms.TransformType.NONE, p_225616_5_, p_225616_6_, p_225616_3_, p_225616_4_);
+            p_225616_3_.pop();
         }
     }
 }

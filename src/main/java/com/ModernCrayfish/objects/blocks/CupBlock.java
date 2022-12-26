@@ -15,6 +15,6 @@ public class CupBlock extends Block {
 
     @Override
     public VoxelShape getShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
-        return Block.box(5, 0, 5, 11, 8, 11);
+        return Block.makeCuboidShape(5, 0, 5, 11, 8, 11);
     }
 }

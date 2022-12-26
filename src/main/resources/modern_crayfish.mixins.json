@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.ModernCrayfish.mixin",
+  "refmap": "modern_crayfish.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.7",
+  "mixins": [
+    "CoffeeTableMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

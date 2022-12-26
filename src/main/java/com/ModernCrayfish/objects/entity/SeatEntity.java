@@ -32,68 +32,71 @@ public class SeatEntity extends Entity {
 
     public SeatEntity(World world) {
         super(EntityInit.SEAT_ENTITY.get(), world);
-        this.noPhysics = true;
+        this.noClip = true;
     }
 
     private SeatEntity(World world, BlockPos source, Vector3d offset,Direction direction) {
         this(world);
         this.source = source;
-        this.setPos(source.getX() + 0.5 + offset.x(), source.getY() + offset.y(), source.getZ() + 0.5 + offset.z());
-        this.setRot(direction.getOpposite().toYRot(), 0F);
+        this.setPosition(source.getX() + 0.5 + offset.x, source.getY() + offset.y, source.getZ() + 0.5 + offset.z);
+        this.setRotation(direction.getOpposite().getHorizontalAngle(), 0F);
     }
 
     private SeatEntity(World world, BlockPos source, Vector3d offset) {
         this(world);
         this.source = source;
-        this.setPos(source.getX() + 0.5 + offset.x(), source.getY() + offset.y(), source.getZ() + 0.5 + offset.z());
+        this.setPosition(source.getX() + 0.5 + offset.x, source.getY() + offset.y, source.getZ() + 0.5 + offset.z);
     }
 
+
     @Override
-    protected void defineSynchedData() {
+    protected void registerData() {
+
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (!this.level.isClientSide) {
+        if (!this.world.isRemote) {
             if (this.getPassengers().isEmpty()) {
                 this.remove();
-                this.level.updateNeighbourForOutputSignal(getOnPos(), level.getBlockState(getOnPos()).getBlock());
+                this.world.updateComparatorOutputLevel(getOnPosition(), world.getBlockState(getOnPosition()).getBlock());
             }
         }
+    }
 
-
+    @Override
+    protected void readAdditional(CompoundNBT compound) {
 
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundNBT p_70037_1_) {}
+    protected void writeAdditional(CompoundNBT compound) {
 
-    @Override
-    protected void addAdditionalSaveData(CompoundNBT p_213281_1_) {}
-
-    @Override
-    public double getMyRidingOffset() {
-        return 0.0;
     }
 
     @Override
-    protected boolean canRide(Entity entity) {
+    protected boolean canBeRidden(Entity p_184228_1_) {
         return true;
     }
 
     @Override
-    public IPacket<?> getAddEntityPacket() {
+    public double getMountedYOffset() {
+        return 0.0;
+    }
+
+    @Override
+    public IPacket<?> createSpawnPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     public static ActionResultType create(World world, BlockPos pos, double yOffset, PlayerEntity player, boolean toilet) {
-        if (!world.isClientSide) {
-            List<Entity> seats = world.getEntitiesOfClass(SeatEntity.class, new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1.0, pos.getY() + 1.0, pos.getZ() + 1.0));
+        if (!world.isRemote) {
+            List<Entity> seats = world.getEntitiesWithinAABB(SeatEntity.class, new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1.0, pos.getY() + 1.0, pos.getZ() + 1.0));
             if (seats.isEmpty()) {
                 SeatEntity seat = new SeatEntity(world, pos, new Vector3d(0, yOffset, 0));
                 seat.toilet = toilet;
-                world.addFreshEntity(seat);
+                world.addEntity(seat);
                 player.startRiding(seat, false);
             }
         }
@@ -102,43 +105,23 @@ public class SeatEntity extends Entity {
 
 
     public static ActionResultType create(World world, BlockPos pos, double yOffset,double offsetAmount, PlayerEntity player, Direction direction, boolean toilet) {
-        if (!world.isClientSide) {
-            List<Entity> seats = world.getEntitiesOfClass(SeatEntity.class, new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1.0, pos.getY() + 1.0, pos.getZ() + 1.0));
+        if (!world.isRemote) {
+            List<Entity> seats = world.getEntitiesWithinAABB(SeatEntity.class, new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1.0, pos.getY() + 1.0, pos.getZ() + 1.0));
             if (seats.isEmpty()) {
                 Vector3d offset = new Vector3d(0, yOffset, 0);
                 if(toilet){
-                    offset.add(direction.getStepX()/offsetAmount,0,direction.getStepZ()/offsetAmount);
+                    offset.add(direction.getXOffset()/offsetAmount,0,direction.getZOffset()/offsetAmount);
                 }
                 SeatEntity seat = new SeatEntity(world, pos, offset, direction);
                 seat.toilet = toilet;
-                world.addFreshEntity(seat);
+                world.addEntity(seat);
                 player.startRiding(seat, false);
                 if(toilet) {
-                    player.displayClientMessage(new TranslationTextComponent("Press "  + KeyBindingInit.KEY_FART.getKey().getDisplayName().getString().toUpperCase() + " for Farts"), false);
+                    player.sendStatusMessage(new TranslationTextComponent("Press "  + KeyBindingInit.KEY_FART.getKey().func_237520_d_().getString().toUpperCase() + " for Farts"), false);
                 }
             }
         }
         return ActionResultType.SUCCESS;
-    }
-
-    @Override
-    public void positionRider(Entity entity) {
-        super.positionRider(entity);
-        this.clampYaw(entity);
-    }
-
-    @Override
-    public void onPassengerTurned(Entity entity) {
-        this.clampYaw(entity);
-    }
-
-    private void clampYaw(Entity passenger) {
-        passenger.setYBodyRot(this.getYHeadRot());
-        float wrappedYaw = MathHelper.wrapDegrees(passenger.getYHeadRot() - this.getYHeadRot());
-        float clampedYaw = MathHelper.clamp(wrappedYaw, -120.0F, 120.0F);
-        passenger.yRotO += clampedYaw - wrappedYaw;
-        passenger.setYBodyRot(passenger.getYHeadRot() + clampedYaw - wrappedYaw);
-        passenger.setYHeadRot(passenger.getYHeadRot());
     }
 
 }

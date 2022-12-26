@@ -28,9 +28,9 @@ public class MirrorEntity extends Entity {
 
     public MirrorEntity(World worldIn, double x, double y, double z, Direction facing) {
         super(EntityInit.MIRROR_ENTITY.get(), worldIn);
-        this.facing = facing.get2DDataValue();
-        this.noPhysics = true;
-        this.setPostionConsideringRotation(x, y, z, facing.get2DDataValue());
+        this.facing = facing.getHorizontalIndex();
+        this.noClip = true;
+        this.setPostionConsideringRotation(x, y, z, facing.getHorizontalIndex());
     }
 
     public void setPostionConsideringRotation(double x, double y, double z, int rotation) {
@@ -49,16 +49,21 @@ public class MirrorEntity extends Entity {
                 x += offset;
                 break;
         }
-        this.setPos(x + 0.5D, y + 0.5, z + 0.5D);
+        this.setPosition(x + 0.5D, y + 0.5, z + 0.5D);
     }
 
+
+    @Override
+    protected void registerData() {
+
+    }
 
     @Override
     public void tick() {
         super.tick();
         if (rendering) {
-            double dy = this.getZ() - mc.player.getZ();
-            double dx = this.getX() - mc.player.getX();
+            double dy = this.getPosZ() - mc.player.getPosZ();
+            double dx = this.getPosX() - mc.player.getPosX();
             double angleYaw = Math.atan2(dy, dx) * (180D / Math.PI);
 
             if (facing == 1) {
@@ -75,11 +80,11 @@ public class MirrorEntity extends Entity {
             if (angleYaw >= 135D) angleYaw = 135D;
             if (angleYaw <= 45D) angleYaw = 45D;
 
-            this.yRot = (float) (-90F + facing * 90F - angleYaw);
+            this.rotationYaw = (float) (-90F + facing * 90F - angleYaw);
 
 
-            double distance = distanceTo(mc.player);
-            double height = (mc.player.getEyeHeight() + mc.player.getY()) - this.getY();
+            double distance = getDistance(mc.player);
+            double height = (mc.player.getEyeHeight() + mc.player.getPosY()) - this.getPosY();
             double anglePitch = Math.atan2(height, distance) * (180D / Math.PI);
             if (anglePitch > 45F) {
                 anglePitch = 45F;
@@ -87,32 +92,27 @@ public class MirrorEntity extends Entity {
             if (anglePitch < -45F) {
                 anglePitch = -45F;
             }
-            this.yRot = (float) anglePitch;
+            this.rotationYaw = (float) anglePitch;
         }
 
-        if (!(level.getBlockState(blockPosition().below()).getBlock() instanceof MirrorBlock)) {
-            MirrorTileEntityRenderer.removeRegisteredMirror(this);
-            this.kill();
+        if (!(world.getBlockState(getPosition().down()).getBlock() instanceof MirrorBlock)) {
+            //MirrorTileEntityRenderer.removeRegisteredMirror(this);
+            this.remove();
         }
     }
 
     @Override
-    protected void defineSynchedData() {
+    protected void readAdditional(CompoundNBT compound) {
 
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundNBT p_70037_1_) {
+    protected void writeAdditional(CompoundNBT compound) {
 
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundNBT p_213281_1_) {
-
-    }
-
-    @Override
-    public IPacket<?> getAddEntityPacket() {
+    public IPacket<?> createSpawnPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 

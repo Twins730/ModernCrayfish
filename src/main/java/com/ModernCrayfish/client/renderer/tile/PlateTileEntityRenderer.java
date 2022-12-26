@@ -16,20 +16,20 @@ public class PlateTileEntityRenderer extends TileEntityRenderer<PlateTileEntity>
     }
 
     @Override
-    public boolean shouldRenderOffScreen(PlateTileEntity plateTileEntity) {
+    public boolean isGlobalRenderer(PlateTileEntity p_188185_1_) {
         return true;
     }
 
     @Override
     public void render(PlateTileEntity plateTileEntity, float p_225616_2_, MatrixStack stack, IRenderTypeBuffer buffer, int p_225616_5_, int p_225616_6_) {
         if(!plateTileEntity.items.get(0).isEmpty()) {
-            stack.pushPose();
+            stack.push();
             stack.translate(0.5, 0.12, 0.5);
             stack.scale(0.5f, 0.5f, 0.5f);
-            stack.mulPose(Vector3f.XP.rotationDegrees(90));
-            stack.mulPose(Vector3f.ZP.rotationDegrees(plateTileEntity.itemDirection.toYRot()));
-            Minecraft.getInstance().getItemRenderer().renderStatic(plateTileEntity.items.get(0), ItemCameraTransforms.TransformType.NONE, p_225616_5_, p_225616_6_, stack, buffer);
-            stack.popPose();
+            stack.rotate(Vector3f.XP.rotationDegrees(90));
+            stack.rotate(Vector3f.ZP.rotationDegrees(plateTileEntity.itemDirection.getHorizontalAngle()));
+            Minecraft.getInstance().getItemRenderer().renderItem(plateTileEntity.items.get(0), ItemCameraTransforms.TransformType.NONE, p_225616_5_, p_225616_6_, stack, buffer);
+            stack.pop();
         }
     }
 }

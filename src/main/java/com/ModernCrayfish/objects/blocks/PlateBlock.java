@@ -1,6 +1,5 @@
 package com.ModernCrayfish.objects.blocks;
 
-import com.ModernCrayfish.objects.tileEntity.CookieJarTileEntity;
 import com.ModernCrayfish.objects.tileEntity.PlateTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -25,7 +24,7 @@ public class PlateBlock extends Block {
 
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader reader, BlockPos pos, ISelectionContext context) {
-        return Block.box(3, 0, 3, 13, 2, 13);
+        return Block.makeCuboidShape(3, 0, 3, 13, 2, 13);
     }
 
     @Override
@@ -40,11 +39,11 @@ public class PlateBlock extends Block {
     }
 
     @Override
-    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult traceResult) {
-        if(world.isClientSide){
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult traceResult) {
+        if(world.isRemote()){
             return ActionResultType.SUCCESS;
         } else {
-            TileEntity tileentity = world.getBlockEntity(pos);
+            TileEntity tileentity = world.getTileEntity(pos);
             if(tileentity instanceof PlateTileEntity){
                 ((PlateTileEntity) tileentity).use(world,player);
             }
@@ -53,11 +52,15 @@ public class PlateBlock extends Block {
     }
 
     @Override
-    public void onRemove(BlockState state, World world, BlockPos pos, BlockState p_196243_4_, boolean p_196243_5_) {
-        TileEntity tileentity = world.getBlockEntity(pos);
+    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState p_196243_4_, boolean p_196243_5_) {
+        TileEntity tileentity = world.getTileEntity(pos);
         if(tileentity instanceof PlateTileEntity){
             ((PlateTileEntity) tileentity).remove(world);
         }
-        super.onRemove(state, world, pos, p_196243_4_, p_196243_5_);
+        super.onReplaced(state, world, pos, p_196243_4_, p_196243_5_);
     }
+
+
+
+
 }

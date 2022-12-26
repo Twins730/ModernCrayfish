@@ -28,45 +28,45 @@ public class LightBlock extends Block implements IWaterLoggable {
 
     public LightBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.defaultBlockState().setValue(LIT, Boolean.FALSE).setValue(WATERLOGGED, Boolean.FALSE));
+        this.setDefaultState(this.getDefaultState().with(LIT, Boolean.FALSE).with(WATERLOGGED, Boolean.FALSE));
     }
 
     public boolean canSurvive(BlockState blockState, IWorldReader worldReader, BlockPos pos) {
-       return Block.canSupportCenter(worldReader, pos.relative(Direction.UP), Direction.DOWN);
+       return Block.hasEnoughSolidSide(worldReader, pos.offset(Direction.UP), Direction.DOWN);
     }
 
 
 
     @Override
     public VoxelShape getShape(BlockState blockState, IBlockReader blockReader, BlockPos pos, ISelectionContext context) {
-        return Block.box(5, 7, 5, 11, 16, 11);
+        return Block.makeCuboidShape(5, 7, 5, 11, 16, 11);
     }
 
     @Nullable
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        FluidState fluidstate = context.getLevel().getFluidState(context.getClickedPos());
-        return this.defaultBlockState().setValue(LIT, Boolean.FALSE).setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+        FluidState fluidstate = context.getWorld().getFluidState(context.getPos());
+        return this.getDefaultState().with(LIT, Boolean.FALSE).with(WATERLOGGED, fluidstate.getFluid() == Fluids.WATER);
     }
 
-    public ActionResultType use(BlockState blockState, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult traceResult) {
-        if (world.isClientSide) {
+    public ActionResultType onBlockActivated(BlockState blockState, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult traceResult) {
+        if (world.isRemote()) {
             return ActionResultType.SUCCESS;
         } else {
-            world.updateNeighborsAt(pos, this);
+            world.notifyNeighborsOfStateChange(pos, this);
             BlockState blockstate = this.pull(blockState, world, pos);
-            float f = blockstate.getValue(LIT) ? 0.6F : 0.5F;
+            float f = blockstate.get(LIT) ? 0.6F : 0.5F;
             return ActionResultType.CONSUME;
         }
     }
 
     public BlockState pull(BlockState state, World world, BlockPos pos) {
-        state = state.cycle(LIT);
-        world.setBlock(pos, state, 3);
+        state = state.func_235896_a_(LIT);
+        world.setBlockState(pos, state, 3);
         this.updateNeighbours(world, pos);
         return state;
     }
 
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(LIT).add(WATERLOGGED);
     }
 
@@ -75,18 +75,18 @@ public class LightBlock extends Block implements IWaterLoggable {
     }
 
     public FluidState getFluidState(BlockState blockState) {
-        return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
+        return blockState.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(blockState);
     }
 
-    public BlockState updateShape(BlockState blockState, Direction direction, BlockState state, IWorld world, BlockPos pos, BlockPos pos1) {
-        if (blockState.getValue(WATERLOGGED)) {
-            world.getLiquidTicks().scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+    public BlockState updatePostPlacement(BlockState blockState, Direction direction, BlockState state, IWorld world, BlockPos pos, BlockPos pos1) {
+        if (blockState.get(WATERLOGGED)) {
+            world.getPendingFluidTicks().scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
 
-        return !blockState.canSurvive(world, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(blockState, direction, state, world, pos, pos1);
+        return !blockState.isValidPosition(world, pos) ? Blocks.AIR.getDefaultState() : super.updatePostPlacement(blockState, direction, state, world, pos, pos1);
     }
 
     private void updateNeighbours(World world, BlockPos pos) {
-        world.updateNeighborsAt(pos, this);
+        world.notifyNeighborsOfStateChange(pos, this);
     }
 }

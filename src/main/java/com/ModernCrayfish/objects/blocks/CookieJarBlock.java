@@ -28,11 +28,11 @@ public class CookieJarBlock extends Block {
     }
 
     @Override
-    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult) {
-        if(world.isClientSide){
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult) {
+        if(world.isRemote()){
             return ActionResultType.SUCCESS;
         } else {
-            TileEntity tileentity = world.getBlockEntity(pos);
+            TileEntity tileentity = world.getTileEntity(pos);
             if(tileentity instanceof CookieJarTileEntity){
                 ((CookieJarTileEntity) tileentity).use(world,player);
             }
@@ -41,12 +41,12 @@ public class CookieJarBlock extends Block {
     }
 
     @Override
-    public void onRemove(BlockState state, World world, BlockPos pos, BlockState p_196243_4_, boolean p_196243_5_) {
-        TileEntity tileentity = world.getBlockEntity(pos);
+    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState p_196243_4_, boolean p_196243_5_) {
+        TileEntity tileentity = world.getTileEntity(pos);
         if(tileentity instanceof CookieJarTileEntity){
             ((CookieJarTileEntity) tileentity).remove(world);
         }
-        super.onRemove(state, world, pos, p_196243_4_, p_196243_5_);
+        super.onReplaced(state, world, pos, p_196243_4_, p_196243_5_);
     }
 
     @Nullable
@@ -57,6 +57,6 @@ public class CookieJarBlock extends Block {
 
     @Override
     public VoxelShape getShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
-        return Block.box(4, 0, 4, 12, 11, 12);
+        return Block.makeCuboidShape(4, 0, 4, 12, 11, 12);
     }
 }

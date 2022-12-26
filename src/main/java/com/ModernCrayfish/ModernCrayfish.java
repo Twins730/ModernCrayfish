@@ -5,47 +5,26 @@ import com.ModernCrayfish.client.renderer.entity.SeatEntityRenderer;
 import com.ModernCrayfish.client.renderer.tile.*;
 import com.ModernCrayfish.init.*;
 import com.ModernCrayfish.objects.entity.SeatEntity;
-import com.ModernCrayfish.objects.tileEntity.CookieJarTileEntity;
-import com.ModernCrayfish.objects.tileEntity.PlateTileEntity;
 import com.ModernCrayfish.util.Constants;
-import com.ModernCrayfish.util.CustomBlockColor;
 import com.ModernCrayfish.util.CustomItemColor;
-import com.ModernCrayfish.util.MirrorRenderer;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.*;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.world.biome.BiomeColors;
 import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jline.utils.Log;
-
-
 
 //The main class for the Modern Crayfish mod
 @Mod(ModernCrayfish.MOD_ID)
@@ -80,10 +59,11 @@ public class ModernCrayfish {
     }
     private void doClientStuff(final FMLClientSetupEvent event) {
         // Setup block rendering
-        RenderTypeLookup.setRenderLayer(BlockInit.CEILING_LIGHT.get(), RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(BlockInit.COOKIE_JAR.get(), RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(BlockInit.CUP.get(), RenderType.translucent());
-
+        RenderTypeLookup.setRenderLayer(BlockInit.CEILING_LIGHT.get(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(BlockInit.COOKIE_JAR.get(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(BlockInit.CUP.get(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(BlockInit.MODERN_WINDOW.get(), RenderType.getCutout());
+        LOGGER.info("Loading render layers for:" + MOD_ID + " complete!");
         // Bind Tiles to their renderers
         ClientRegistry.bindTileEntityRenderer(TileInit.CEILING_FAN_TILE.get(), CeilingFanTileEntityRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileInit.PLATE_TILE.get(), PlateTileEntityRenderer::new);
@@ -91,57 +71,36 @@ public class ModernCrayfish {
         ClientRegistry.bindTileEntityRenderer(TileInit.CUTTING_BOARD.get(), CuttingBoardTileEntityRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileInit.TOASTER.get(), ToasterTileEntityRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileInit.MIRROR_TILE.get(), MirrorTileEntityRenderer::new);
-
+        LOGGER.info("Loading bindTileEntityRenderer for:" + MOD_ID + " complete!");
         // Register Entity renderer to the entity
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.SEAT_ENTITY.get(), SeatEntityRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.MIRROR_ENTITY.get(), MirrorEntityRenderer::new);
+        LOGGER.info("Loading registerEntityRenderingHandler for:" + MOD_ID + " complete!");
         // Register Keybindings
         ClientRegistry.registerKeyBinding(KeyBindingInit.KEY_FART);
+        LOGGER.info("Loading registerKeyBinding for:" + MOD_ID + " complete!");
     }
 
     @SubscribeEvent
     public void playerTick(TickEvent.PlayerTickEvent event) {
-        if (event.player.getVehicle() instanceof SeatEntity) {
-            if (((SeatEntity) event.player.getVehicle()).toilet) {
-                if (KeyBindingInit.KEY_FART.consumeClick()) {
-                    event.player.getVehicle().playSound(SoundsInit.FART.get(), 0.5f, 0.3f);
+        if (event.player.getRidingEntity() instanceof SeatEntity) {
+            if (((SeatEntity) event.player.getRidingEntity()).toilet) {
+                if (KeyBindingInit.KEY_FART.isPressed()) {
+                    event.player.getRidingEntity().playSound(SoundsInit.FART.get(), 0.5f, 0.3f);
                 }
             }
         }
     }
 
     @SubscribeEvent
-    public void onClientWorldLoad(WorldEvent.Load event) {
-        if(event.getWorld() instanceof ClientWorld) {
-            MirrorTileEntityRenderer.reflection.setLevel((ClientWorld) event.getWorld());
-        }
+    public void renderTick(TickEvent.RenderTickEvent event){
+      //  MirrorTileEntityRenderer.tick(event);
     }
 
     @SubscribeEvent
     public void onClientWorldUnload(WorldEvent.Unload event) {
         if(event.getWorld() instanceof ClientWorld) {
-            MirrorTileEntityRenderer.clearRegisteredMirrors();
-        }
-    }
-
-    @SubscribeEvent
-    public void onPrePlayerRender(RenderPlayerEvent.Pre event) {
-        if(!rendering) return;
-
-        if(event.getPlayer() == renderEntity) {
-            backupEntity = Minecraft.getInstance().cameraEntity;
-            Minecraft.getInstance().setCameraEntity(renderEntity);
-        }
-    }
-
-    @SubscribeEvent
-    public void onPostPlayerRender(RenderPlayerEvent.Post event)
-    {
-        if(!rendering) return;
-
-        if(event.getPlayer() == renderEntity) {
-            Minecraft.getInstance().setCameraEntity(backupEntity);
-            renderEntity = null;
+           // MirrorTileEntityRenderer.clearRegisteredMirrors();
         }
     }
 
@@ -160,14 +119,14 @@ public class ModernCrayfish {
     @Mod.EventBusSubscriber(modid = ModernCrayfish.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ModernCrayfishGroup extends ItemGroup {
 
-        public static final ModernCrayfishGroup MODERN_CRAYFISH = new ModernCrayfishGroup(ItemGroup.TABS.length, "modern_crayfish");
+        public static final ModernCrayfishGroup MODERN_CRAYFISH = new ModernCrayfishGroup(ItemGroup.GROUPS.length, "modern_crayfish");
 
         public ModernCrayfishGroup(int Int, String label) {
             super(Int, label);
         }
 
         @Override
-        public ItemStack makeIcon() {
+        public ItemStack createIcon() {
             return new ItemStack(Items.ANVIL);
         }
     }

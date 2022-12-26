@@ -29,56 +29,56 @@ public class ToasterTileEntity extends TileEntity implements ITickableTileEntity
     }
 
     public void use(World world, PlayerEntity player, Direction direction) {
-        if (!world.isClientSide) {
-            if (player.isShiftKeyDown() && !toasting) {
+        if (!world.isRemote) {
+            if (player.isSneaking() && !toasting) {
                 this.toasting = true;
             } else if (!toasting) {
-                if (player.getMainHandItem().getItem() == ItemInit.BREAD_SLICE.get() && items.get(1).isEmpty()) {
+                if (player.getHeldItemMainhand().getItem() == ItemInit.BREAD_SLICE.get() && items.get(1).isEmpty()) {
                     if (items.get(0).isEmpty()) {
-                        this.items.set(0, new ItemStack(player.getMainHandItem().getItem(), 1));
+                        this.items.set(0, new ItemStack(player.getHeldItemMainhand().getItem(), 1));
                     } else {
-                        this.items.set(1, new ItemStack(player.getMainHandItem().getItem(), 1));
+                        this.items.set(1, new ItemStack(player.getHeldItemMainhand().getItem(), 1));
                     }
-                    player.getMainHandItem().shrink(1);
+                    player.getHeldItemMainhand().shrink(1);
                     this.itemDirection = direction;
                 } else {
                     if (!items.get(0).isEmpty()) {
-                        player.addItem(items.get(0));
+                        player.addItemStackToInventory(items.get(0));
                         items.set(0, ItemStack.EMPTY);
-                        world.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
+                        world.notifyBlockUpdate(this.pos, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
                         return;
                     }
                     if (!items.get(1).isEmpty()) {
-                        player.addItem(items.get(1));
+                        player.addItemStackToInventory(items.get(1));
                         items.set(1, ItemStack.EMPTY);
                     }
                 }
             }
-            world.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
+            world.notifyBlockUpdate(this.pos, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
         }
     }
 
     public void remove(World world) {
-        if (!world.isClientSide) {
-            items.forEach((item) -> world.addFreshEntity(new ItemEntity(world, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), item)));
+        if (!world.isRemote) {
+            items.forEach((item) -> world.addEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), item)));
         }
     }
 
     @Override
     public void tick() {
-        assert level != null;
-        if (!level.isClientSide) {
+        assert world != null;
+        if (!world.isRemote) {
             if (toasting) {
                 if (toastTime == 200) {
                     for (ItemStack item : items) {
                         if (!item.isEmpty()) {
                             item = new ItemStack(ItemInit.TOAST.get());
-                            level.addFreshEntity(new ItemEntity(level, worldPosition.getX(), worldPosition.getY() + 0.1, worldPosition.getZ(), item));
+                            world.addEntity(new ItemEntity(world, pos.getX(), pos.getY() + 0.1, pos.getZ(), item));
                         }
                     }
                     this.items.set(0, ItemStack.EMPTY);
                     this.items.set(1, ItemStack.EMPTY);
-                    level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
+                    world.notifyBlockUpdate(this.pos, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
                     this.toastTime = 0;
                     this.toasting = false;
                 } else {
@@ -90,21 +90,21 @@ public class ToasterTileEntity extends TileEntity implements ITickableTileEntity
 
 
     @Override
-    public void load(BlockState state, CompoundNBT nbt) {
-        super.load(state, nbt);
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
         this.toasting = nbt.getBoolean("toasting");
         this.toastTime = nbt.getDouble("toastTime");
-        this.itemDirection = Direction.fromYRot(nbt.getDouble("Direction"));
+        this.itemDirection = Direction.fromAngle(nbt.getDouble("Direction"));
         this.items = NonNullList.withSize(2, ItemStack.EMPTY);
         ItemStackHelper.loadAllItems(nbt, items);
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT nbt) {
-        super.save(nbt);
+    public CompoundNBT write(CompoundNBT nbt) {
+        super.write(nbt);
         nbt.putBoolean("toasting", toasting);
         nbt.putDouble("toastTime", toastTime);
-        nbt.putDouble("Direction",itemDirection.toYRot());
+        nbt.putDouble("Direction",itemDirection.getHorizontalAngle());
         ItemStackHelper.saveAllItems(nbt, items);
         return nbt;
     }
@@ -115,24 +115,24 @@ public class ToasterTileEntity extends TileEntity implements ITickableTileEntity
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         CompoundNBT nbt = new CompoundNBT();
-        this.save(nbt);
-        return new SUpdateTileEntityPacket(worldPosition, 1, nbt);
+        this.write(nbt);
+        return new SUpdateTileEntityPacket(pos, 1, nbt);
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
-        return this.save(new CompoundNBT());
+        return this.write(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        assert level != null;
-        this.load(level.getBlockState(worldPosition), pkt.getTag());
+        assert world != null;
+        this.read(world.getBlockState(pos), pkt.getNbtCompound());
     }
 
     @Override
     public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        this.load(state, tag);
+        this.read(state, tag);
         super.handleUpdateTag(state, tag);
     }
 }

@@ -28,16 +28,16 @@ import javax.annotation.Nullable;
 
 public class MirrorBlock extends Block implements IWaterLoggable {
 
-    private static final VoxelShape SHAPE_S = Block.box(4, 3, 0, 12, 13, 2);
-    private static final VoxelShape SHAPE_N = Block.box(4, 3, 14, 12, 13, 16);
-    private static final VoxelShape SHAPE_E = Block.box(0, 3, 4, 2, 13, 12);
-    private static final VoxelShape SHAPE_W = Block.box(14, 3, 4, 16, 13, 12);
+    private static final VoxelShape SHAPE_S = Block.makeCuboidShape(4, 3, 0, 12, 13, 2);
+    private static final VoxelShape SHAPE_N = Block.makeCuboidShape(4, 3, 14, 12, 13, 16);
+    private static final VoxelShape SHAPE_E = Block.makeCuboidShape(0, 3, 4, 2, 13, 12);
+    private static final VoxelShape SHAPE_W = Block.makeCuboidShape(14, 3, 4, 16, 13, 12);
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     public MirrorBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, Boolean.FALSE).setValue(FACING,Direction.NORTH));
+        this.setDefaultState(this.getDefaultState().with(WATERLOGGED, Boolean.FALSE).with(FACING,Direction.NORTH));
     }
 
     @Override
@@ -52,19 +52,13 @@ public class MirrorBlock extends Block implements IWaterLoggable {
     }
 
     @Override
-    public void onPlace(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
-        super.onPlace(p_220082_1_, p_220082_2_, p_220082_3_, p_220082_4_, p_220082_5_);
-    }
-
-
-    @Override
     public VoxelShape getCollisionShape(BlockState p_220071_1_, IBlockReader p_220071_2_, BlockPos p_220071_3_, ISelectionContext p_220071_4_) {
         return getShape(p_220071_1_,p_220071_2_,p_220071_3_,p_220071_4_);
     }
 
     @Override
     public VoxelShape getShape(BlockState blockState, IBlockReader reader, BlockPos pos, ISelectionContext context) {
-        switch (blockState.getValue(FACING)){
+        switch (blockState.get(FACING)){
             case NORTH: return SHAPE_N;
             case SOUTH: return SHAPE_S;
             case WEST: return SHAPE_W;
@@ -78,20 +72,23 @@ public class MirrorBlock extends Block implements IWaterLoggable {
         return true;//p_196260_2_.getBlockState(p_196260_3_.relative(p_196260_1_.getValue(FACING).getOpposite())).useShapeForLightOcclusion();
     }
 
-    public BlockState updateShape(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
-        return p_196271_2_.getOpposite() == p_196271_1_.getValue(FACING) && p_196271_1_.canSurvive(p_196271_4_, p_196271_5_) ? Blocks.AIR.defaultBlockState() : super.updateShape(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
+
+    public BlockState updatePostPlacement(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
+        return p_196271_2_.getOpposite() == p_196271_1_.get(FACING) && p_196271_1_.isValidPosition(p_196271_4_, p_196271_5_) ? Blocks.AIR.getDefaultState() : super.updatePostPlacement(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
     }
 
+
+
     public BlockState rotate(BlockState p_185499_1_, Rotation p_185499_2_) {
-        return p_185499_1_.setValue(FACING, p_185499_2_.rotate(p_185499_1_.getValue(FACING)));
+        return p_185499_1_.with(FACING, p_185499_2_.rotate(p_185499_1_.get(FACING)));
     }
 
     public BlockState mirror(BlockState p_185471_1_, Mirror p_185471_2_) {
-        return p_185471_1_.rotate(p_185471_2_.getRotation(p_185471_1_.getValue(FACING)));
+        return p_185471_1_.rotate(p_185471_2_.toRotation(p_185471_1_.get(FACING)));
     }
 
     public FluidState getFluidState(BlockState blockState) {
-        return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
+        return blockState.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(blockState);
     }
 
     public PushReaction getPistonPushReaction(BlockState p_149656_1_) {
@@ -100,18 +97,18 @@ public class MirrorBlock extends Block implements IWaterLoggable {
 
     @Nullable
     public BlockState getStateForPlacement(BlockItemUseContext p_196258_1_) {
-        BlockState blockstate = this.defaultBlockState();
-        FluidState fluidstate = p_196258_1_.getLevel().getFluidState(p_196258_1_.getClickedPos());
-        IWorldReader iworldreader = p_196258_1_.getLevel();
-        BlockPos blockpos = p_196258_1_.getClickedPos();
+        BlockState blockstate = this.getDefaultState();
+        FluidState fluidstate = p_196258_1_.getWorld().getFluidState(p_196258_1_.getPos());
+        IWorldReader iworldreader = p_196258_1_.getWorld();
+        BlockPos blockpos = p_196258_1_.getPos();
         Direction[] adirection = p_196258_1_.getNearestLookingDirections();
 
         for(Direction direction : adirection) {
             if (direction.getAxis().isHorizontal()) {
                 Direction direction1 = direction.getOpposite();
-                blockstate = blockstate.setValue(FACING, direction1);
+                blockstate = blockstate.with(FACING, direction1);
                 //if (blockstate.canSurvive(iworldreader, blockpos)) {
-                    return blockstate.setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+                    return blockstate.with(WATERLOGGED, fluidstate.getFluid() == Fluids.WATER);
                // }
             }
         }
@@ -120,7 +117,7 @@ public class MirrorBlock extends Block implements IWaterLoggable {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> blockStateBuilder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> blockStateBuilder) {
         blockStateBuilder.add(WATERLOGGED, FACING);
     }
 

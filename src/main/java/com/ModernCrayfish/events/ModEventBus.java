@@ -27,7 +27,7 @@ public class ModEventBus {
 
             if (blockAccess != null && pos != null)
             {
-                return BiomeColors.getAverageFoliageColor(blockAccess, pos);
+                return BiomeColors.getFoliageColor(blockAccess, pos);
             }
 
             return GrassColors.get(0.5D, 1.0D);
@@ -41,7 +41,7 @@ public class ModEventBus {
     {
         // Use the Block's colour handler for an ItemBlock
         final IItemColor itemBlockColourHandler = (stack, tintIndex) -> {
-            BlockState iblockstate = ((BlockItem) stack.getItem()).getBlock().defaultBlockState();
+            BlockState iblockstate = ((BlockItem) stack.getItem()).getBlock().getDefaultState();
             return event.getBlockColors().getColor(iblockstate, null, null, tintIndex);
         };
 

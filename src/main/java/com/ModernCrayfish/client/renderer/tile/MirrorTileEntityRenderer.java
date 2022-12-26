@@ -9,15 +9,21 @@ import com.ModernCrayfish.util.MirrorRenderer;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.sun.javafx.geom.Vec3d;
+import javafx.scene.Camera;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.model.BlockPart;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.renderer.tileentity.EnchantmentTableTileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
@@ -25,30 +31,38 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ScreenShotHelper;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.awt.image.BufferedImage;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.system.MemoryUtil.NULL;
+
 //TODO FIX this mess
-@Mod.EventBusSubscriber
 public class MirrorTileEntityRenderer extends TileEntityRenderer<MirrorTileEntity> {
 
     public static final Minecraft mc = Minecraft.getInstance();
-    public static WorldRenderer reflection = new MirrorRenderer(Minecraft.getInstance(),Minecraft.getInstance().renderBuffers());
+    public static WorldRenderer reflection = new MirrorRenderer(Minecraft.getInstance(),Minecraft.getInstance().getRenderTypeBuffers());
     private static Map<MirrorEntity, Integer> registerMirrors = new ConcurrentHashMap<>();
     private static List<Integer> pendingRemoval = Collections.synchronizedList(new ArrayList<Integer>());
-    private int quality = 32;
-    private long renderEndNanoTime;
+    private static NativeImage image;
+    private static int quality = 32;
+    private static long renderEndNanoTime;
+
+
 
 
     public MirrorTileEntityRenderer(TileEntityRendererDispatcher dispatcher) {
@@ -58,152 +72,124 @@ public class MirrorTileEntityRenderer extends TileEntityRenderer<MirrorTileEntit
 
     @Override
     public void render(MirrorTileEntity tileEntity, float p_225616_2_, MatrixStack stack, IRenderTypeBuffer buffer, int p_225616_5_, int p_225616_6_) {
-
-      //  if(!ConfigurationHandler.mirrorEnabled)
-        //    return;
-
-        if(TileEntityRendererDispatcher.instance.camera.getEntity() instanceof MirrorEntity)
-            return;
-
+      /*
         MirrorEntity entityMirror = tileEntity.getMirror();
         if(entityMirror == null)
             return;
 
+        image = ScreenShotHelper.takeScreenshot(quality,quality,mc.getMainRenderTarget());
         if(!registerMirrors.containsKey(entityMirror))
         {
-            int newTextureId = GL11.glGenTextures();
-            GlStateManager._bindTexture(newTextureId);
+            int textureID = image.format().glFormat();
+            GlStateManager._bindTexture(textureID);
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, quality, quality, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, BufferUtils.createByteBuffer(3 * quality * quality));
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-            registerMirrors.put(tileEntity.getMirror(), newTextureId);
+            registerMirrors.put(tileEntity.getMirror(), textureID);
             return;
         }
 
-        entityMirror.rendering = true;
-
-        Direction facing = tileEntity.getBlockState().getValue(MirrorBlock.FACING);
         stack.pushPose();
-        {
-            GlStateManager._enableBlend();
-            //OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+        GL11.glPushMatrix();
+        this.applyRegionalRenderOffset();
+        BlockPos camPos = getCameraBlockPos();
+        int regionX = (camPos.getX() >> 9) * 512;
+        int regionZ = (camPos.getZ() >> 9) * 512;
+        GL11.glTranslated(tileEntity.pos().getX() - regionX, tileEntity.pos().getY(), tileEntity.pos().getZ() - regionZ);
+        GL11.glRotated(360,0,tileEntity.getBlockState().getValue(MirrorBlock.FACING).getOpposite().toYRot(),0);
 
-            GlStateManager._disableLighting();
-            GlStateManager._color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            GlStateManager._bindTexture(registerMirrors.get(entityMirror));
+        AxisAlignedBB bb =  new AxisAlignedBB(0.93,0.93,0.93    , 0.07,0.07,0.07);
 
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDisable(GL11.GL_CULL_FACE);
 
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+       // GL11.glBindTexture(GL11.GL_TEXTURE_2D, registerMirrors.get(entityMirror));
 
-           // stack.mulPose(new Quaternion(-90F * facing.toYRot() + 180F, 0, 1, 0));
-           // stack.translate(-0.5F, 0, -0.43F);
+        if(image != null) {
+            image.upload(0, 0, 0, false);
+          //  ModernCrayfish.LOGGER.info(image.getPixelRGBA(0, 0) + "");
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,image.format().glFormat());
 
-
-            GlStateManager._enableRescaleNormal();
-
-            // Render
-            GL11.glBegin(GL11.GL_QUADS);
-            {
-                GL11.glTexCoord2d(1, 0);
-                GL11.glVertex3d(0.0625, 0.0625, 0);
-                GL11.glTexCoord2d(0, 0);
-                GL11.glVertex3d(0.9375, 0.0625, 0);
-                GL11.glTexCoord2d(0, 1);
-                GL11.glVertex3d(0.9375, 0.9375, 0);
-                GL11.glTexCoord2d(1, 1);
-                GL11.glVertex3d(0.0625, 0.9375, 0);
-                ModernCrayfish.LOGGER.info("Rendering!!!");
-            }
-            GL11.glEnd();
-
-            GlStateManager._disableRescaleNormal();
-            GlStateManager._disableBlend();
-            GlStateManager._enableLighting();
         }
 
 
+
+        GL11.glBegin(GL11.GL_QUADS);
+        switch (tileEntity.getBlockState().getValue(MirrorBlock.FACING)) {
+            case NORTH:
+                GL11.glVertex3d(bb.minX, bb.minY, bb.maxZ);
+                GL11.glVertex3d(bb.maxX, bb.minY, bb.maxZ);
+                GL11.glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
+                GL11.glVertex3d(bb.minX, bb.maxY, bb.maxZ);
+                break;
+            case SOUTH:
+                GL11.glVertex3d(bb.minX, bb.minY, bb.minZ);
+                GL11.glVertex3d(bb.minX, bb.maxY, bb.minZ);
+                GL11.glVertex3d(bb.maxX, bb.maxY, bb.minZ);
+                GL11.glVertex3d(bb.maxX, bb.minY, bb.minZ);
+                break;
+            case WEST:
+                GL11.glVertex3d(bb.maxX, bb.minY, bb.minZ);
+                GL11.glVertex3d(bb.maxX, bb.maxY, bb.minZ);
+                GL11.glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
+                GL11.glVertex3d(bb.maxX, bb.minY, bb.maxZ);
+                break;
+            case EAST:
+                GL11.glVertex3d(bb.minX, bb.minY, bb.minZ);
+                GL11.glVertex3d(bb.minX, bb.minY, bb.maxZ);
+                GL11.glVertex3d(bb.minX, bb.maxY, bb.maxZ);
+                GL11.glVertex3d(bb.minX, bb.maxY, bb.minZ);
+                break;
+        }
+
+        GL11.glTexCoord2d(0, 0);
+        GL11.glTexCoord2d(1, 0);
+        GL11.glTexCoord2d(0, 1);
+        GL11.glTexCoord2d(1, 1);
+        GL11.glEnd();
+
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glPopMatrix();
         stack.popPose();
+
+       */
     }
 
-
-    @SubscribeEvent
-    public void tick(TickEvent.RenderTickEvent event) {
-        if (event.phase.equals(TickEvent.Phase.END))
-            return;
-
-        //if(!ConfigurationHandler.mirrorEnabled)
-        //   return;
-
-        if (!pendingRemoval.isEmpty()) {
-            for (Integer integer : pendingRemoval) {
-                GlStateManager._deleteTexture(integer);
+/*
+    public static void tick(TickEvent.RenderTickEvent event){
+        if(event.phase == TickEvent.Phase.END){
+            if(!pendingRemoval.isEmpty())
+            {
+                for(Integer integer : pendingRemoval)
+                {
+                    GlStateManager.deleteTexture(integer);
+                }
+                pendingRemoval.clear();
             }
-            pendingRemoval.clear();
-        }
 
-        if (mc.isWindowActive()) {
-            for (MirrorEntity entity : registerMirrors.keySet()) {
-                if (entity == null) {
-                    registerMirrors.remove(entity);
-                    continue;
+            if(mc.isGameFocused()) {
+                for (MirrorEntity entity : registerMirrors.keySet()) {
+                    if (entity == null) {
+                        registerMirrors.remove(entity);
+                        continue;
+                    }
+
+                    if (!entity.rendering)
+                        continue;
+
+                    if (!mc.player.canEntityBeSeen(entity))
+                        continue;
+
+                   // GameRenderer entityRenderer = mc.gameRenderer;
+                   // entityRenderer.renderLevel(event.renderTickTime, renderEndNanoTime + (1000000000 / 30),new MatrixStack());
+
                 }
-
-                if (!entity.rendering)
-                    continue;
-
-                if (!mc.player.canSee(entity))
-                    continue;
-
-                if(entity.distanceTo(mc.player) < 5) {
-                    WorldRenderer renderBackup = mc.levelRenderer;
-                    Entity entityBackup = mc.getCameraEntity();
-                    GameSettings settings = mc.options;
-                    PointOfView thirdPersonBackup = settings.getCameraType();
-                    boolean hideGuiBackup = settings.hideGui;
-                    int mipmapBackup = settings.mipmapLevels;
-                    double fovBackup = settings.fov;
-                    int widthBackup = mc.getMainRenderTarget().viewWidth;
-                    int heightBackup = mc.getMainRenderTarget().viewHeight;
-
-                    //mc.levelRenderer = reflection;
-                    mc.setCameraEntity(entity);
-                    settings.fov = 80;//ConfigurationHandler.mirrorFov;
-                    settings.setCameraType(PointOfView.FIRST_PERSON);
-                    settings.hideGui = true;
-                    settings.mipmapLevels = 3;
-                    mc.getMainRenderTarget().resize(quality, quality, false);
-
-                    ModernCrayfish.rendering = true;
-                    ModernCrayfish.renderEntity = mc.player;
-
-                    int fps = Math.max(30, settings.framerateLimit);
-                    GameRenderer entityRenderer = mc.gameRenderer;
-                    entityRenderer.renderLevel(event.renderTickTime, renderEndNanoTime + (1000000000 / fps), new MatrixStack());
-                    GlStateManager._bindTexture(registerMirrors.get(entity));
-                    GL11.glCopyTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, 0, 0, quality, quality, 0);
-
-                    renderEndNanoTime = System.nanoTime();
-
-                    ModernCrayfish.renderEntity = null;
-                    ModernCrayfish.rendering = false;
-
-                    //mc.levelRenderer = renderBackup;
-                    mc.setCameraEntity(entityBackup);
-                    settings.fov = fovBackup;
-                    settings.setCameraType(thirdPersonBackup);
-                    settings.hideGui = hideGuiBackup;
-                    settings.mipmapLevels = mipmapBackup;
-                    mc.getMainRenderTarget().resize(widthBackup, heightBackup, false);
-                }
-
-                entity.rendering = false;
             }
         }
     }
-
-
-
 
     public static void removeRegisteredMirror(MirrorEntity entity)
     {
@@ -211,10 +197,49 @@ public class MirrorTileEntityRenderer extends TileEntityRenderer<MirrorTileEntit
         registerMirrors.remove(entity);
     }
 
-    public static void clearRegisteredMirrors()
-    {
+    public static void clearRegisteredMirrors() {
         registerMirrors.clear();
     }
+
+    public void applyRegionalRenderOffset()
+    {
+        applyCameraRotationOnly();
+
+        Vector3d camPos = getCameraPos();
+        BlockPos blockPos = getCameraBlockPos();
+
+        int regionX = (blockPos.getX() >> 9) * 512;
+        int regionZ = (blockPos.getZ() >> 9) * 512;
+
+        GL11.glTranslated(regionX - camPos.x, -camPos.y, regionZ - camPos.z);
+    }
+
+
+    public Vector3d getCameraPos()
+    {
+        ActiveRenderInfo camera = mc.getEntityRenderDispatcher().camera;
+        if(camera == null)
+            return Vector3d.ZERO;
+
+        return camera.getPosition();
+    }
+
+    public BlockPos getCameraBlockPos()
+    {
+        ActiveRenderInfo camera = mc.getEntityRenderDispatcher().camera;
+        if(camera == null)
+            return BlockPos.ZERO;
+
+        return camera.getBlockPosition();
+    }
+
+    public void applyCameraRotationOnly()
+    {
+        ActiveRenderInfo camera = mc.getEntityRenderDispatcher().camera;
+        GL11.glRotated(MathHelper.wrapDegrees(camera.getXRot()), 1, 0, 0);
+        GL11.glRotated(MathHelper.wrapDegrees(camera.getYRot() + 180.0), 0, 1, 0);
+    }
+    */
 }
 
 

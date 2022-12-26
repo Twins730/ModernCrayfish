@@ -21,22 +21,24 @@ public class ModernBedBlock extends BedBlock {
 
     public ModernBedBlock(DyeColor color, Properties properties) {
         super(color, properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(LEFT, Boolean.FALSE).setValue(RIGHT, Boolean.FALSE));
+        this.setDefaultState(this.getDefaultState().with(LEFT, Boolean.FALSE).with(RIGHT, Boolean.FALSE));
     }
 
     @Nullable @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        Direction direction = context.getHorizontalDirection();
-        BlockPos blockpos = context.getClickedPos();
-        BlockPos blockpos1 = blockpos.relative(direction);
-        boolean left = (context.getLevel().getBlockState(blockpos.relative(direction.getCounterClockWise())).getBlock() == this);
-        boolean right = (context.getLevel().getBlockState(blockpos.relative(direction.getClockWise())).getBlock() == this);
-        return context.getLevel().getBlockState(blockpos1).canBeReplaced(context) ? this.defaultBlockState().setValue(FACING, direction).setValue(LEFT, left).setValue(RIGHT, right) : null;
+        Direction direction = context.getNearestLookingDirection();
+        BlockPos blockpos = context.getPos();
+        BlockPos blockpos1 = blockpos.offset(direction);
+        boolean left = (context.getWorld().getBlockState(blockpos.offset(direction.rotateYCCW())).getBlock() == this);
+        boolean right = (context.getWorld().getBlockState(blockpos.offset(direction.rotateY())).getBlock() == this);
+        return context.getWorld().getBlockState(blockpos1).isReplaceable(context) ? this.getDefaultState().with(HORIZONTAL_FACING, direction).with(LEFT, left).with(RIGHT, right) : null;
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> blockStateBuilder) {
-        super.createBlockStateDefinition(blockStateBuilder);
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> blockStateBuilder) {
+        super.fillStateContainer(blockStateBuilder);
         blockStateBuilder.add(LEFT, RIGHT);
     }
+
+
 }

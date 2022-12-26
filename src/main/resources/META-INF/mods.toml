@@ -25,3 +25,9 @@ description='''
     versionRange="[1.16.5,1.17)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.modern_crayfish]]
+    modId="cfm"
+    mandatory=true
+    versionRange="[7.0.0-pre22,)"
+    ordering="AFTER"
+    side="BOTH"

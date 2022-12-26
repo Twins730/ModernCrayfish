@@ -27,14 +27,14 @@ public class MirrorRenderer extends WorldRenderer {
 
     }
 
-
     @Override
-    public void levelEvent(PlayerEntity p_180439_1_, int p_180439_2_, BlockPos p_180439_3_, int p_180439_4_) {
+    public void playEvent(PlayerEntity p_180439_1_, int p_180439_2_, BlockPos p_180439_3_, int p_180439_4_) {
 
     }
 
     @Override
-    public void playStreamingMusic(@Nullable SoundEvent p_184377_1_, BlockPos p_184377_2_) {
+    public void playRecord(@Nullable SoundEvent p_184377_1_, BlockPos p_184377_2_) {
 
     }
+
 }

@@ -27,56 +27,56 @@ public class CuttingBoardTileEntity extends TileEntity {
     }
 
     public void remove(World world){
-        if(!world.isClientSide){
+        if(!world.isRemote){
             items.forEach((item)->{
-                world.addFreshEntity(new ItemEntity(world,worldPosition.getX(),worldPosition.getY(),worldPosition.getZ(),item));
+                world.addEntity(new ItemEntity(world,pos.getX(),pos.getY(),pos.getZ(),item));
             });
         }
     }
 
     public void use(World world, PlayerEntity player, Direction direction) {
-        if (!world.isClientSide) {
+        if (!world.isRemote) {
             if (!items.get(0).isEmpty()) {
-                if (player.getMainHandItem().getItem() == ItemInit.CUTTING_KNIFE.get() && items.get(0).getItem() != ItemInit.BREAD_SLICE.get()) {
+                if (player.getHeldItemMainhand().getItem() == ItemInit.CUTTING_KNIFE.get() && items.get(0).getItem() != ItemInit.BREAD_SLICE.get()) {
                     this.items.set(0, new ItemStack(ItemInit.BREAD_SLICE.get(), 8));
                 } else {
-                    player.addItem(items.get(0));
+                    player.addItemStackToInventory(items.get(0));
                     this.items.set(0, ItemStack.EMPTY);
                 }
-            } else if (player.getMainHandItem().getItem() == Items.BREAD) {
+            } else if (player.getHeldItemMainhand().getItem() == Items.BREAD) {
                 this.itemDirection = direction;
-                this.items.set(0, new ItemStack(player.getMainHandItem().getItem(), 1));
-                player.getMainHandItem().shrink(1);
+                this.items.set(0, new ItemStack(player.getHeldItemMainhand().getItem(), 1));
+                player.getHeldItemMainhand().shrink(1);
             }
-            world.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
+            world.notifyBlockUpdate(this.pos, this.getBlockState(), this.getBlockState(), Constants.BlockFlags.BLOCK_UPDATE);
         } else {
             if(!items.get(0).isEmpty()){
-                player.playSound(SoundEvents.ITEM_PICKUP,1,1);
+                player.playSound(SoundEvents.ENTITY_ITEM_PICKUP,1,1);
             }
         }
     }
 
     private void playSound(SoundEvent p_213965_2_) {
-        Vector3i vector3i = worldPosition;
-        double d0 = (double)this.worldPosition.getX() + 0.5D + (double)vector3i.getX() / 2.0D;
-        double d1 = (double)this.worldPosition.getY() + 0.5D + (double)vector3i.getY() / 2.0D;
-        double d2 = (double)this.worldPosition.getZ() + 0.5D + (double)vector3i.getZ() / 2.0D;
-        this.level.playSound((PlayerEntity)null, d0, d1, d2, p_213965_2_, SoundCategory.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
+        Vector3i vector3i = pos;
+        double d0 = (double)this.pos.getX() + 0.5D + (double)vector3i.getX() / 2.0D;
+        double d1 = (double)this.pos.getY() + 0.5D + (double)vector3i.getY() / 2.0D;
+        double d2 = (double)this.pos.getZ() + 0.5D + (double)vector3i.getZ() / 2.0D;
+        this.world.playSound((PlayerEntity)null, d0, d1, d2, p_213965_2_, SoundCategory.BLOCKS, 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT nbt) {
-        super.load(state, nbt);
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
         this.items = NonNullList.withSize(1, ItemStack.EMPTY);
         ItemStackHelper.loadAllItems(nbt, items);
-        this.itemDirection = Direction.fromYRot(nbt.getDouble("Direction"));
+        this.itemDirection = Direction.fromAngle(nbt.getDouble("Direction"));
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT nbt) {
-        super.save(nbt);
+    public CompoundNBT write(CompoundNBT nbt) {
+        super.write(nbt);
         ItemStackHelper.saveAllItems(nbt, items);
-        nbt.putDouble("Direction",itemDirection.toYRot());
+        nbt.putDouble("Direction",itemDirection.getHorizontalAngle());
         return nbt;
     }
 
@@ -86,25 +86,25 @@ public class CuttingBoardTileEntity extends TileEntity {
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         CompoundNBT nbt = new CompoundNBT();
-        this.save(nbt);
+        this.write(nbt);
 
-        return new SUpdateTileEntityPacket(worldPosition, 1, nbt);
+        return new SUpdateTileEntityPacket(pos, 1, nbt);
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
-        return this.save(new CompoundNBT());
+        return this.write(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        assert level != null;
-        this.load(level.getBlockState(worldPosition),pkt.getTag());
+        assert world != null;
+        this.read(world.getBlockState(pos),pkt.getNbtCompound());
     }
 
     @Override
     public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        this.load(state,tag);
+        this.read(state,tag);
         super.handleUpdateTag(state, tag);
     }
 }

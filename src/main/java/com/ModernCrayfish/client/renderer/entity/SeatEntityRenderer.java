@@ -12,7 +12,7 @@ public class SeatEntityRenderer extends EntityRenderer<SeatEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(SeatEntity seatEntity) {
+    public ResourceLocation getEntityTexture(SeatEntity seatEntity) {
         return null;
     }
 }
