@@ -33,6 +33,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 public class LightSwitchBlock extends Block implements IWaterLoggable {
 
@@ -82,9 +83,9 @@ public class LightSwitchBlock extends Block implements IWaterLoggable {
             world.playSound(player, pos, SoundsInit.LIGHT_SWITCH.get(), SoundCategory.BLOCKS, 0.4f, 0.9f);
             return ActionResultType.SUCCESS;
         } else {
-            ((LightSwitchTileEntity)world.getTileEntity(pos)).use(world);
             world.notifyNeighborsOfStateChange(pos, this);
             this.pull(blockState, world, pos);
+            ((LightSwitchTileEntity) (Objects.requireNonNull(world.getTileEntity(pos)))).setState(blockState.get(ON));
             return ActionResultType.CONSUME;
         }
     }
@@ -122,18 +123,6 @@ public class LightSwitchBlock extends Block implements IWaterLoggable {
 
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(ON).add(WATERLOGGED).add(FACING);
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
-        CompoundNBT compoundnbt = stack.getChildTag("BlockEntityTag");
-        if (compoundnbt != null) {
-            //if (compoundnbt.contains("xPoses")){
-             //   for(compoundnbt.getIntArray("xPoses");;) {
-                    list.add(new StringTextComponent("Light/Fan"));
-             //   }
-           // }
-        }
     }
 
     @Nullable

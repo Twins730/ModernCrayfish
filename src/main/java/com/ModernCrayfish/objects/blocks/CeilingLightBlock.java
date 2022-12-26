@@ -21,12 +21,12 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class LightBlock extends Block implements IWaterLoggable {
+public class CeilingLightBlock extends Block implements IWaterLoggable, Switchable {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
 
-    public LightBlock(Properties properties) {
+    public CeilingLightBlock(Properties properties) {
         super(properties);
         this.setDefaultState(this.getDefaultState().with(LIT, Boolean.FALSE).with(WATERLOGGED, Boolean.FALSE));
     }

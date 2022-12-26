@@ -1,42 +1,63 @@
 package com.ModernCrayfish.objects.tileEntity;
 
-import com.ModernCrayfish.ModernCrayfish;
+import com.ModernCrayfish.init.BlockInit;
 import com.ModernCrayfish.init.TileInit;
 import com.ModernCrayfish.objects.blocks.CeilingFanBlock;
-import com.ModernCrayfish.objects.blocks.LightBlock;
-import com.ModernCrayfish.objects.blocks.LightSwitchBlock;
+import com.ModernCrayfish.objects.blocks.CeilingLightBlock;
+import com.ModernCrayfish.objects.blocks.Switchable;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.BarrelTileEntity;
-import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.LongNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LightSwitchTileEntity extends TileEntity {
 
-    public List<BlockPos> targets = new ArrayList<>();
+    private final List<BlockPos> lights = NonNullList.create();
 
     public LightSwitchTileEntity() {
         super(TileInit.LIGHT_SWITCH_TILE.get());
     }
 
-    public void use(World world){
+    public void use(World world) {
+        /*
         targets.forEach(target->{
-            ModernCrayfish.LOGGER.info("pulled @ "+target);
-            if(world.getBlockState(target).getBlock() instanceof LightBlock){
-                world.getBlockState(target).func_235896_a_(LightBlock.LIT);
-                world.neighborChanged(target,getBlockState().getBlock(),pos);
+            ModernCrayfish.LOGGER.info("REEEEEEEEEEE @"+target.toString());
+            if(world.getBlockState(target).getBlock() instanceof CeilingLightBlock){
+                world.notifyBlockUpdate(target,world.getBlockState(target),world.getBlockState(target).func_235896_a_(CeilingLightBlock.LIT),3);
+             //   world.neighborChanged(target,getBlockState().getBlock(),pos);
             }
 
             if(world.getBlockState(target).getBlock() instanceof CeilingFanBlock){
-                world   .getBlockState(target).func_235896_a_(CeilingFanBlock.POWERED);
+                world.notifyBlockUpdate(target,world.getBlockState(target),world.getBlockState(target).func_235896_a_(CeilingFanBlock.POWERED),3);
+               // world.getBlockState(target).func_235896_a_(CeilingFanBlock.POWERED);
+                //world.neighborChanged(target,getBlockState().getBlock(),pos);
+            }
+        });
 
-                world.neighborChanged(target,getBlockState().getBlock(),pos);
+         */
+    }
+
+    public void setState(boolean powered) {
+        lights.removeIf(lightPos ->
+        {
+            BlockState state = world.getBlockState(lightPos);
+            return !(state.getBlock() instanceof Switchable);
+        });
+        lights.forEach(pos1 -> {
+            assert world != null;
+            BlockState state = world.getBlockState(pos1);
+            if (state.getBlock() instanceof CeilingLightBlock) {
+                world.setBlockState(pos1, BlockInit.CEILING_LIGHT.get().getDefaultState().with(CeilingLightBlock.LIT, powered));
+            }
+            if (state.getBlock() instanceof CeilingFanBlock) {
+                world.setBlockState(pos1, BlockInit.CEILING_FAN.get().getDefaultState().with(CeilingFanBlock.POWERED, powered));
             }
         });
     }
@@ -44,28 +65,28 @@ public class LightSwitchTileEntity extends TileEntity {
 
     @Override
     public CompoundNBT write(CompoundNBT nbt) {
-        List<Integer> xPoses = new ArrayList<>();
-        List<Integer> yPoses = new ArrayList<>();
-        List<Integer> zPoses = new ArrayList<>();
-        this.targets.forEach((target)->{
-            xPoses.add(target.getX());
-            yPoses.add(target.getY());
-            zPoses.add(target.getZ());
-        });
-        nbt.putIntArray("xPoses", xPoses);
-        nbt.putIntArray("yPoses", yPoses);
-        nbt.putIntArray("zPoses", zPoses);
+        ListNBT list = new ListNBT();
+        lights.forEach(blockPos -> list.add(LongNBT.valueOf(blockPos.toLong())));
+        nbt.put("lights",list);
+
         return super.write(nbt);
     }
 
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
-        int[] xPoses = nbt.getIntArray("xPoses");
-        int[] yPoses = nbt.getIntArray("yPoses");
-        int[] zPoses = nbt.getIntArray("zPoses");
-        for(int i = 0;i <= xPoses.length - 1;i++){
-            targets.add(new BlockPos(xPoses[i],yPoses[i],zPoses[i]));
-        }
+        lights.clear();
+        ListNBT tagList = nbt.getList("lights",Constants.NBT.TAG_LONG);
+        tagList.forEach(nbtBase -> addLight(((LongNBT)nbtBase).getLong()));
         super.read(state, nbt);
+    }
+
+
+    private void addLight(long pos)
+    {
+        BlockPos lightPos = BlockPos.fromLong(pos);
+        if(!lights.contains(lightPos))
+        {
+            lights.add(lightPos);
+        }
     }
 }

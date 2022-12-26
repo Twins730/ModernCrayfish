@@ -66,7 +66,29 @@ public class ModernWindowBlock extends FourWayBlock {
         if (state.get(WATERLOGGED)) {
             level.getPendingFluidTicks().scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(level));
         }
-        return direction.getAxis().isHorizontal() ? state.with(FACING_TO_PROPERTY_MAP.get(direction), this.attachesTo(neighborState, neighborState.isSolidSide(level, neighborPos, direction.getOpposite()))) : super.updatePostPlacement(state, direction, neighborState, level, pos, neighborPos);
+        BlockPos blockposN = pos.north();
+        BlockPos blockposS = pos.south();
+        BlockPos blockposW = pos.west();
+        BlockPos blockposE = pos.east();
+        BlockPos blockposU = pos.up();
+        BlockPos blockposB = pos.down();
+        BlockState blockstateN = level.getBlockState(blockposN);
+        BlockState blockstateS = level.getBlockState(blockposS);
+        BlockState blockstateW = level.getBlockState(blockposW);
+        BlockState blockstateE = level.getBlockState(blockposE);
+        BlockState blockstateU = level.getBlockState(blockposU);
+        BlockState blockstateB = level.getBlockState(blockposB);
+
+        return state.with(NORTH, this.attachesTo(blockstateN, blockstateN.isSolidSide(level, blockposN, Direction.SOUTH)))
+                .with(SOUTH, this.attachesTo(blockstateS, blockstateS.isSolidSide(level, blockposS, Direction.NORTH)))
+                .with(WEST, this.attachesTo(blockstateW, blockstateW.isSolidSide(level, blockposW, Direction.EAST)))
+                .with(EAST, this.attachesTo(blockstateE, blockstateE.isSolidSide(level, blockposE, Direction.WEST)))
+                .with(P_NORTH, blockstateN.getBlock() == this)
+                .with(P_SOUTH, blockstateS.getBlock() == this)
+                .with(P_WEST, blockstateW.getBlock() == this)
+                .with(P_EAST, blockstateE.getBlock() == this)
+                .with(UP, (blockstateU.getBlock() == this))
+                .with(DOWN, (blockstateB.getBlock() == this));
     }
 
     public final boolean attachesTo(BlockState state, boolean p_220112_2_) {

@@ -26,7 +26,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class CeilingFanBlock extends Block implements IWaterLoggable {
+public class CeilingFanBlock extends Block implements IWaterLoggable, Switchable {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty POWERED = BooleanProperty.create("powered");

@@ -2,7 +2,6 @@ package com.ModernCrayfish.init;
 
 import com.ModernCrayfish.ModernCrayfish;
 import com.ModernCrayfish.objects.blocks.*;
-import com.mrcrayfish.furniture.block.TableBlock;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -20,7 +19,7 @@ public class BlockInit {
     //Register the blocks
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ModernCrayfish.MOD_ID);
 
-    public static final RegistryObject<Block> CEILING_LIGHT = BLOCKS.register("ceiling_light",()-> new LightBlock(AbstractBlock.Properties.create(Material.GLASS).hardnessAndResistance(0.2f).sound(SoundType.GLASS).notSolid().setLightLevel(litBlockEmission(15))));
+    public static final RegistryObject<Block> CEILING_LIGHT = BLOCKS.register("ceiling_light",()-> new CeilingLightBlock(AbstractBlock.Properties.create(Material.GLASS).hardnessAndResistance(0.2f).sound(SoundType.GLASS).notSolid().setLightLevel(litBlockEmission(15))));
     public static final RegistryObject<Block> CEILING_FAN = BLOCKS.register("ceiling_fan",()-> new CeilingFanBlock(AbstractBlock.Properties.create(Material.WOOD).hardnessAndResistance(0.2f).sound(SoundType.WOOD).notSolid()));
     public static final RegistryObject<Block> LIGHT_SWITCH = BLOCKS.register("light_switch",()-> new LightSwitchBlock(AbstractBlock.Properties.create(Material.ROCK).hardnessAndResistance(0.2f).sound(SoundType.STONE).notSolid()));
     public static final RegistryObject<Block> TOILET = BLOCKS.register("toilet",()-> new ToiletBlock(AbstractBlock.Properties.create(Material.ROCK).hardnessAndResistance(0.2f).sound(SoundType.STONE)));

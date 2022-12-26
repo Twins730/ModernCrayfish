@@ -109,7 +109,6 @@ public class ModernCrayfish {
         event.getBlockColors().register(Constants.waterColor, BlockInit.TOILET.get(),BlockInit.GOLDEN_TOILET.get());
     }
 
-
     public void registerItemColors(ColorHandlerEvent.Item event){
         // Register the items to the water color modifier
         event.getItemColors().register(new CustomItemColor(0x3D8EFF), ItemInit.TOILET.get(), ItemInit.GOLDEN_TOILET.get());

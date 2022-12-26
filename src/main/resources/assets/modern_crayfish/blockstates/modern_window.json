@@ -88,7 +88,7 @@
             "apply": { "model": "modern_crayfish:block/modern_window_side_up", "y": 0 }
         },
         {   "when": { "north": true, "pane_up": false, "pane_down": true, "pane_north": false },
-            "apply": { "model": "modern_crayfish:modern_window_side_down", "y": 90 }
+            "apply": { "model": "modern_crayfish:block/modern_window_side_down", "y": 90 }
         },
         {   "when": { "east": true, "pane_up": false, "pane_down": true, "pane_east": false },
             "apply": { "model": "modern_crayfish:block/modern_window_side_down", "y": 180 }
