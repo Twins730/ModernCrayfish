@@ -4,12 +4,14 @@ import com.ModernCrayfish.init.BlockInit;
 import com.ModernCrayfish.init.TileInit;
 import com.ModernCrayfish.objects.blocks.CeilingFanBlock;
 import com.ModernCrayfish.objects.blocks.CeilingLightBlock;
+import com.ModernCrayfish.objects.blocks.ModernLightBlock;
 import com.ModernCrayfish.objects.blocks.Switchable;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.LongNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -58,6 +60,10 @@ public class LightSwitchTileEntity extends TileEntity {
             }
             if (state.getBlock() instanceof CeilingFanBlock) {
                 world.setBlockState(pos1, BlockInit.CEILING_FAN.get().getDefaultState().with(CeilingFanBlock.POWERED, powered));
+            }
+            if (state.getBlock() instanceof ModernLightBlock) {
+                Direction facing = world.getBlockState(pos1).get(ModernLightBlock.FACING);
+                world.setBlockState(pos1, BlockInit.MODERN_LIGHT.get().getDefaultState().with(ModernLightBlock.LIT, powered).with(ModernLightBlock.FACING,facing));
             }
         });
     }

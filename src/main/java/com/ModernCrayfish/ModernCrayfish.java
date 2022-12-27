@@ -33,9 +33,6 @@ public class ModernCrayfish {
 
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "modern_crayfish";
-    public static boolean rendering = false;
-    public static Entity renderEntity = null;
-    public static Entity backupEntity = null;
 
     //Initialize the mod
     public ModernCrayfish() {

@@ -1,0 +1,54 @@
+{
+  "variants": {
+    "facing=north,lit=true": {
+      "model": "modern_crayfish:block/modern_light_on",
+      "x": 90
+    },
+    "facing=east,lit=true": {
+      "model": "modern_crayfish:block/modern_light_on",
+      "y": -90,
+      "x": -90
+    },
+    "facing=south,lit=true": {
+      "model": "modern_crayfish:block/modern_light_on",
+      "x": -90
+    },
+    "facing=west,lit=true": {
+      "model": "modern_crayfish:block/modern_light_on",
+      "y": 90,
+      "x": -90
+    },
+    "facing=up,lit=true": {
+      "model": "modern_crayfish:block/modern_light_on"
+    },
+    "facing=down,lit=true": {
+      "model": "modern_crayfish:block/modern_light_on",
+      "x": 180
+    },
+    "facing=north,lit=false": {
+      "model": "modern_crayfish:block/modern_light_off",
+      "x": 90
+    },
+    "facing=east,lit=false": {
+      "model": "modern_crayfish:block/modern_light_off",
+      "y": -90,
+      "x": -90
+    },
+    "facing=south,lit=false": {
+      "model": "modern_crayfish:block/modern_light_off",
+      "x": -90
+    },
+    "facing=west,lit=false": {
+      "model": "modern_crayfish:block/modern_light_off",
+      "y": 90,
+      "x": -90
+    },
+    "facing=up,lit=false": {
+      "model": "modern_crayfish:block/modern_light_off"
+    },
+    "facing=down,lit=false": {
+      "model": "modern_crayfish:block/modern_light_off",
+      "x": 180
+    }
+  }
+}
