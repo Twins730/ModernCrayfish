@@ -46,10 +46,10 @@ public class ItemInit {
     //NON USABLE ITEMS
     public static final RegistryObject<Item> CEILING_FAN_FAN = ITEMS.register("ceiling_fan_fan",()-> new Item(new Item.Properties().maxStackSize(1)));
 
-
     //FOOD
     public static final RegistryObject<Item> TOAST = ITEMS.register("toast", ()-> new Item(new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).food(new Food.Builder().hunger(4).saturation(1.0f).build())));
     public static final RegistryObject<Item> BREAD_SLICE = ITEMS.register("bread_slice", ()-> new Item(new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).food(new Food.Builder().hunger(1).saturation(0.2f).build())));
     public static final RegistryObject<Item> CUTTING_KNIFE = ITEMS.register("cutting_knife", ()-> new Item(new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH)));
+    public static final RegistryObject<Item> TV_REMOTE = ITEMS.register("tv_remote", ()-> new Item(new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).maxStackSize(1)));
 
 }

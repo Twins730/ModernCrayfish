@@ -1,6 +1,6 @@
 {
-  "block.light_switch": {
-    "subtitle": "block.light_switch",
+  "modern_crayfish.block.light_switch": {
+    "subtitle": "modern_crayfish.block.light_switch",
     "sounds": [
       {
         "name": "modern_crayfish:block/light_switch",
@@ -8,8 +8,8 @@
       }
     ]
   },
-  "entity.fart": {
-    "subtitle": "entity.fart",
+  "modern_crayfish.entity.fart": {
+    "subtitle": "modern_crayfish.entity.fart",
     "sounds": [
       {
         "name": "modern_crayfish:entity/fart_1",
@@ -24,5 +24,25 @@
         "stream": true
       }
     ]
+  },
+  "modern_crayfish.microwave.run": {
+    "subtitle": "modern_crayfish.microwave.run",
+    "sounds": [
+      {
+        "name": "modern_crayfish:block/microwave_running",
+        "stream": true
+      }
+    ]
+  },
+  "modern_crayfish.microwave.finish": {
+    "subtitle": "modern_crayfish.microwave.finish",
+    "sounds": [
+      {
+        "name": "modern_crayfish:block/microwave_finish",
+        "stream": true
+      }
+    ]
   }
+
+
 }

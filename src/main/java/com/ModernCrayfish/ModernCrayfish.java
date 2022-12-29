@@ -2,15 +2,20 @@ package com.ModernCrayfish;
 
 import com.ModernCrayfish.client.renderer.entity.MirrorEntityRenderer;
 import com.ModernCrayfish.client.renderer.entity.SeatEntityRenderer;
+import com.ModernCrayfish.client.renderer.screen.MicrowaveScreen;
 import com.ModernCrayfish.client.renderer.tile.*;
 import com.ModernCrayfish.init.*;
 import com.ModernCrayfish.objects.entity.SeatEntity;
 import com.ModernCrayfish.util.Constants;
 import com.ModernCrayfish.util.CustomItemColor;
+import com.mrcrayfish.furniture.client.gui.screen.inventory.CrateScreen;
+import com.mrcrayfish.furniture.core.ModContainers;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.*;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,6 +27,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +48,7 @@ public class ModernCrayfish {
         BlockInit.BLOCKS.register(bus);
         ItemInit.ITEMS.register(bus);
         TileInit.TILE_ENTITIES.register(bus);
+        ContainerInit.CONTAINERS.register(bus);
         SoundsInit.SOUNDS.register(bus);
         EntityInit.ENTITIES.register(bus);
 
@@ -52,6 +59,7 @@ public class ModernCrayfish {
         // FMLClientSetup Bus
         bus.addListener(this::doClientStuff);
         MinecraftForge.EVENT_BUS.register(this);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
         LOGGER.info("ModID loading:" + MOD_ID + " complete!");
     }
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -76,6 +84,9 @@ public class ModernCrayfish {
         // Register Keybindings
         ClientRegistry.registerKeyBinding(KeyBindingInit.KEY_FART);
         LOGGER.info("Loading registerKeyBinding for:" + MOD_ID + " complete!");
+        // Register screen factories
+        ScreenManager.registerFactory(ContainerInit.MICROWAVE_CONTAINER.get(), MicrowaveScreen::new);
+        LOGGER.info("Loaing registerFactory for:" + MOD_ID + " complete!");
     }
 
     @SubscribeEvent
@@ -99,6 +110,11 @@ public class ModernCrayfish {
         if(event.getWorld() instanceof ClientWorld) {
            // MirrorTileEntityRenderer.clearRegisteredMirrors();
         }
+    }
+
+
+    public void onCommonSetup(FMLCommonSetupEvent event) {
+       PacketInit.init();
     }
 
     public void registerBlockColors(ColorHandlerEvent.Block event){

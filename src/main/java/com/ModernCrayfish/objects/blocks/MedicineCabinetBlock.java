@@ -9,19 +9,11 @@ import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
 
-public class MedicineCabinetBlock extends ContainerBlock implements IWaterLoggable {
+public class MedicineCabinetBlock extends Block{
 
     public MedicineCabinetBlock(Properties properties){
         super(properties);
     }
 
-    @Nullable
-    @Override
-    public TileEntity createNewTileEntity(IBlockReader worldIn) {
-        return null;
-    }
-
-
-    BarrelBlock
 
 }

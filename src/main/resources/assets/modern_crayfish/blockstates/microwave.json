@@ -1,0 +1,8 @@
+{
+"variants": {
+"facing=north": {"model": "modern_crayfish:block/microwave_pre", "y": 270},
+"facing=south": { "model": "modern_crayfish:block/microwave_pre", "y": 90},
+"facing=east": { "model": "modern_crayfish:block/microwave_pre"},
+"facing=west": { "model": "modern_crayfish:block/microwave_pre", "y": 180}
+}
+}
