@@ -2,6 +2,7 @@ package com.ModernCrayfish.init;
 
 import com.ModernCrayfish.ModernCrayfish;
 import com.ModernCrayfish.objects.blocks.*;
+import com.mrcrayfish.furniture.block.TableBlock;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -38,13 +39,19 @@ public class BlockInit {
 
     //MODERN BLOCKS
     public static final RegistryObject<Block> MODERN_WINDOW = BLOCKS.register("modern_window",()-> new ModernWindowBlock(AbstractBlock.Properties.create(Material.ROCK)));
-   // public static final RegistryObject<Block> MODERN_BED = BLOCKS.register("modern_bed",()-> new ModernBedBlock(AbstractBlock.Properties.of(Material.STONE)));
+    public static final RegistryObject<Block> MODERN_BED = BLOCKS.register("modern_bed",()-> new ModernBedBlock(AbstractBlock.Properties.create(Material.ROCK)));
     public static final RegistryObject<Block> MODERN_DOOR  = BLOCKS.register("modern_door",()-> new ModernDoorBlock(AbstractBlock.Properties.create(Material.ROCK)));
-    public static final RegistryObject<Block> MODERN_TABLE = BLOCKS.register("modern_table",()-> new ModernTableBlock(AbstractBlock.Properties.create(Material.ROCK)));
+    public static final RegistryObject<Block> MODERN_TABLE = BLOCKS.register("modern_table",()-> new TableBlock(AbstractBlock.Properties.create(Material.ROCK)));
+    public static final RegistryObject<Block> MODERN_TABLE_OUTDOOR = BLOCKS.register("modern_table_outdoor",()-> new TableBlock(AbstractBlock.Properties.create(Material.ROCK)));
+
+
     public static final RegistryObject<Block> MODERN_LIGHT = BLOCKS.register("modern_light",()-> new ModernLightBlock(AbstractBlock.Properties.create(Material.ROCK).hardnessAndResistance(0.2f).sound(SoundType.STONE).notSolid().setLightLevel(litBlockEmission(15))));
 
-    //COLORED ITEMS
-    public static final RegistryObject<Block> LAMP  = BLOCKS.register("lamp",()-> new LampBlock(AbstractBlock.Properties.create(Material.ROCK)));
+    //COLORED ITEMS//
+    //Lamps
+    public static final RegistryObject<Block> WHITE_LAMP  = BLOCKS.register("white_lamp",()-> new LampBlock(AbstractBlock.Properties.create(Material.ROCK)));
+
+    //Bar seats
     public static final RegistryObject<Block> BAR_SEAT  = BLOCKS.register("bar_seat",()-> new LampBlock(AbstractBlock.Properties.create(Material.ROCK)));
 
     private static ToIntFunction<BlockState> litBlockEmission(int p_235420_0_) {

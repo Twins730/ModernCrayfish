@@ -99,5 +99,4 @@ public class ModernWindowBlock extends FourWayBlock {
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> p_206840_1_) {
         p_206840_1_.add(NORTH, EAST, WEST, SOUTH, P_NORTH, P_SOUTH, P_EAST, P_WEST, UP, DOWN, WATERLOGGED);
     }
-
 }

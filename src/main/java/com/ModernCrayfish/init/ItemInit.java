@@ -35,12 +35,14 @@ public class ItemInit {
     //MODERN BLOCKS
     //public static final RegistryObject<Item> MODERN_DOOR = ITEMS.register("modern_door",()-> new BlockItem(BlockInit.MODERN_DOOR.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
     public static final RegistryObject<Item> MODERN_WINDOW = ITEMS.register("modern_window",()-> new BlockItem(BlockInit.MODERN_WINDOW.get(),new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).maxStackSize(64)));
-   // public static final RegistryObject<Item> MODERN_BED = ITEMS.register("modern_bed",()-> new BlockItem(BlockInit.MODERN_BED.get(),new Item.Properties().tab(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).stacksTo(64)));
+    public static final RegistryObject<Item> MODERN_BED = ITEMS.register("modern_bed",()-> new BlockItem(BlockInit.MODERN_BED.get(),new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).maxStackSize(64)));
     public static final RegistryObject<Item> MODERN_TABLE = ITEMS.register("modern_table",()-> new BlockItem(BlockInit.MODERN_TABLE.get(),new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).maxStackSize(64)));
+    public static final RegistryObject<Item> MODERN_TABLE_OUTDOOR = ITEMS.register("modern_table_outdoor",()-> new BlockItem(BlockInit.MODERN_TABLE_OUTDOOR.get(),new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).maxStackSize(64)));
+
     public static final RegistryObject<Item> MODERN_LIGHT = ITEMS.register("modern_light",()-> new BlockItem(BlockInit.MODERN_LIGHT.get(),new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).maxStackSize(64)));
 
     //COLORED ITEMS
-    public static final RegistryObject<Item> LAMP = ITEMS.register("lamp",()-> new BlockItem(BlockInit.LAMP.get(),new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).maxStackSize(64)));
+    public static final RegistryObject<Item> LAMP = ITEMS.register("lamp",()-> new BlockItem(BlockInit.WHITE_LAMP.get(),new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).maxStackSize(64)));
     public static final RegistryObject<Item> BAR_SEAT = ITEMS.register("bar_seat",()-> new BlockItem(BlockInit.BAR_SEAT.get(),new Item.Properties().group(ModernCrayfish.ModernCrayfishGroup.MODERN_CRAYFISH).maxStackSize(64)));
 
     //NON USABLE ITEMS

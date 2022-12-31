@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 public class CeilingLightBlock extends Block implements IWaterLoggable, Switchable {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
+    public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
     public CeilingLightBlock(Properties properties) {
         super(properties);

@@ -1,9 +1,9 @@
 {
     "__comment": "Model generated using MrCrayfish's Model Creator (https://mrcrayfish.com/tools?id=mc)",
     "textures": {
-        "particle": "blocks/glass",
-        "0": "blocks/concrete_white",
-        "1": "blocks/glass"
+        "particle": "block/glass",
+        "0": "block/white_concrete",
+        "1": "block/glass"
     },
     "display": {
         "gui": {

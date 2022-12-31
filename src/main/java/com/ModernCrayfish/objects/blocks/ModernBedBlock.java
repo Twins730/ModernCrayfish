@@ -1,44 +1,58 @@
 package com.ModernCrayfish.objects.blocks;
 
-
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.*;
+import net.minecraft.block.material.PushReaction;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BedPart;
-import net.minecraft.util.Direction;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.BedTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityMerger;
+import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.*;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 
-public class ModernBedBlock extends BedBlock {
+public class ModernBedBlock extends HorizontalBlock implements IWaterLoggable {
 
-    public final BooleanProperty LEFT = BooleanProperty.create("left");
-    public final BooleanProperty RIGHT = BooleanProperty.create("right");
-
-    public ModernBedBlock(DyeColor color, Properties properties) {
-        super(color, properties);
-        this.setDefaultState(this.getDefaultState().with(LEFT, Boolean.FALSE).with(RIGHT, Boolean.FALSE));
-    }
-
-    @Nullable @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
-        Direction direction = context.getNearestLookingDirection();
-        BlockPos blockpos = context.getPos();
-        BlockPos blockpos1 = blockpos.offset(direction);
-        boolean left = (context.getWorld().getBlockState(blockpos.offset(direction.rotateYCCW())).getBlock() == this);
-        boolean right = (context.getWorld().getBlockState(blockpos.offset(direction.rotateY())).getBlock() == this);
-        return context.getWorld().getBlockState(blockpos1).isReplaceable(context) ? this.getDefaultState().with(HORIZONTAL_FACING, direction).with(LEFT, left).with(RIGHT, right) : null;
+    public static final EnumProperty<BedPart> PART = BlockStateProperties.BED_PART;
+    public static final BooleanProperty OCCUPIED = BlockStateProperties.OCCUPIED;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    
+    public ModernBedBlock(Properties properties) {
+        super(properties);
+        this.setDefaultState(getDefaultState().with(HORIZONTAL_FACING,Direction.NORTH).with(PART, BedPart.FOOT).with(OCCUPIED,false).with(WATERLOGGED,false));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> blockStateBuilder) {
-        super.fillStateContainer(blockStateBuilder);
-        blockStateBuilder.add(LEFT, RIGHT);
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(HORIZONTAL_FACING);
+        builder.add(PART);
+        builder.add(OCCUPIED);
+        builder.add(WATERLOGGED);
     }
-
-
 }
